@@ -12,9 +12,10 @@ export default function AdminSidebar() {
         { label: 'Dashboard', href: '/admin', icon: 'dashboard' },
         { label: 'Properties', href: '/admin/properties', icon: 'real_estate_agent' },
         { label: 'Inclusions', href: '/admin/inclusions', icon: 'list' },
-        { label: 'Designs', href: '/admin/designs', icon: 'architecture' }, // Placeholder for now
-        { label: 'Enquiries', href: '/admin/enquiries', icon: 'mail' }, // Placeholder
-        { label: 'Settings', href: '/admin/settings', icon: 'settings' }, // Placeholder
+        { label: 'Designs', href: '/admin/designs', icon: 'architecture' },
+        { label: 'Studio', href: '/admin/studio', icon: 'design_services' },
+        { label: 'Enquiries', href: '/admin/enquiries', icon: 'mail' },
+        { label: 'Settings', href: '/admin/settings', icon: 'settings' },
     ]
 
     const handleLogout = () => {

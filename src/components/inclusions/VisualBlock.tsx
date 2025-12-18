@@ -38,7 +38,7 @@ export default function VisualBlock({ item }: VisualBlockProps) {
 
                 <div className="mt-auto">
                     <ul className="space-y-3">
-                        {item.features.map((feature, idx) => (
+                        {(item.features || []).map((feature, idx) => (
                             <li key={idx} className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
                                 <span className="material-symbols-outlined text-deep-slate text-[18px] shrink-0 mt-0.5">check_circle</span>
                                 <span className="font-medium">{feature}</span>

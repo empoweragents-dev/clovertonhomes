@@ -91,6 +91,49 @@ export async function GET(
         });
     } catch (error: any) {
         console.error("Error fetching tier data:", error);
+
+        // Return demo data when database is unavailable for development
+        if (error.message === "DATABASE_URL is not set") {
+            const { slug } = await params;
+            const DEMO_TIERS: Record<string, any> = {
+                designer: { id: "demo-tier-1", name: "Designer", slug: "designer", description: "Our entry-level inclusion tier", colorHex: "#4A5568" },
+                elegance: { id: "demo-tier-2", name: "Elegance", slug: "elegance", description: "Mid-range premium inclusions", colorHex: "#2C5282" },
+                signature: { id: "demo-tier-3", name: "Signature", slug: "signature", description: "Our top-tier luxury inclusions", colorHex: "#1A365D" },
+            };
+            const tier = DEMO_TIERS[slug] || DEMO_TIERS.designer;
+
+            const DEMO_CATEGORIES = [
+                {
+                    id: "demo-cat-1", name: "Kitchen & Appliances", slug: "kitchen", headline: "Culinary Excellence", icon: "countertops", sortOrder: 1,
+                    items: [
+                        { id: "demo-item-1", title: "Stone Benchtops", description: "20mm Caesarstone or equivalent engineered stone benchtops", imageUrl: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800", badge: "Popular", features: ["20mm thickness", "Multiple color options", "Stain resistant"] },
+                        { id: "demo-item-2", title: "Stainless Steel Appliances", description: "600mm electric oven, gas cooktop, and rangehood", imageUrl: "https://images.unsplash.com/photo-1556909172-8c2f041fca1e?w=800", badge: "", features: ["Energy efficient", "Modern design", "5-year warranty"] },
+                    ]
+                },
+                {
+                    id: "demo-cat-2", name: "Bathroom & Ensuite", slug: "bathroom", headline: "Spa-Inspired Luxury", icon: "bathroom", sortOrder: 2,
+                    items: [
+                        { id: "demo-item-3", title: "Floor to Ceiling Tiles", description: "Porcelain tiles to wet areas", imageUrl: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800", badge: "", features: ["Premium porcelain", "Easy to clean", "Water resistant"] },
+                        { id: "demo-item-4", title: "Frameless Shower Screen", description: "Semi-frameless pivot or sliding shower screen", imageUrl: "https://images.unsplash.com/photo-1620626011761-996317b8d101?w=800", badge: "Premium", features: ["10mm toughened glass", "Chrome hardware", "Modern elegance"] },
+                    ]
+                },
+                {
+                    id: "demo-cat-3", name: "Flooring", slug: "flooring", headline: "Foundation of Style", icon: "floor", sortOrder: 3,
+                    items: [
+                        { id: "demo-item-5", title: "Hybrid Flooring", description: "Timber-look hybrid flooring to living areas", imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800", badge: "", features: ["Water resistant", "Scratch resistant", "Easy installation"] },
+                    ]
+                },
+            ];
+
+            console.log("📦 Returning demo tier detail data (DATABASE_URL not configured)");
+            return NextResponse.json({
+                success: true,
+                data: { tier, categories: DEMO_CATEGORIES },
+                demo: true,
+                warning: "Using demo data - configure DATABASE_URL for real data"
+            });
+        }
+
         return NextResponse.json(
             { success: false, message: error?.message || "Failed to fetch tier data" },
             { status: 500 }

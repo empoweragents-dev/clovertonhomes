@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { generatePropertyBrochure } from '@/utils/generateBrochure'
 
 interface Tier {
     id: string
@@ -24,6 +25,7 @@ export default function PropertyInclusions() {
     const [activeTier, setActiveTier] = useState<string>('')
     const [categories, setCategories] = useState<Category[]>([])
     const [loading, setLoading] = useState(true)
+    const [generating, setGenerating] = useState(false)
 
     useEffect(() => {
         const fetchTiers = async () => {
@@ -64,6 +66,45 @@ export default function PropertyInclusions() {
     }, [activeTier])
 
     const activeTierData = tiers.find(t => t.slug === activeTier)
+
+    const handleDownloadBrochure = async () => {
+        if (generating) return
+        setGenerating(true)
+
+        try {
+            // Get property data from the page (using demo data for now)
+            const propertyData = {
+                title: 'The Aspen 240',
+                address: 'Lot 42, Evergreen Estate, Deep Creek, VIC 3999',
+                bedrooms: 4,
+                bathrooms: 2,
+                garages: 2,
+                squareMeters: 240,
+                landArea: 450,
+                price: '$799,900',
+                description: 'The Aspen 240 redefines family living with its clever zoning and open-plan design. The heart of the home features a gourmet kitchen with a butler\'s pantry, overlooking the spacious meals and family area that spills out to the alfresco.'
+            }
+
+            const filename = await generatePropertyBrochure({
+                property: propertyData,
+                tierName: activeTierData?.name || 'Designer',
+                categories: categories.map(cat => ({
+                    name: cat.name,
+                    items: cat.items.map(item => ({
+                        title: item.title,
+                        features: item.features || []
+                    }))
+                }))
+            })
+
+            console.log('PDF downloaded:', filename)
+        } catch (error) {
+            console.error('Failed to generate brochure:', error)
+            alert('Failed to generate brochure. Please try again.')
+        } finally {
+            setGenerating(false)
+        }
+    }
 
     return (
         <div className="space-y-6">
@@ -118,14 +159,23 @@ export default function PropertyInclusions() {
 
                     {/* Download Brochure Button */}
                     <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <a
-                            href={`/brochures/${activeTier}-inclusions.pdf`}
-                            download
-                            className="inline-flex items-center gap-2 bg-brand-charcoal hover:bg-black text-white px-6 py-3 rounded-lg font-bold transition-all shadow-md hover:shadow-lg"
+                        <button
+                            onClick={handleDownloadBrochure}
+                            disabled={generating}
+                            className="inline-flex items-center gap-2 bg-brand-charcoal hover:bg-black text-white px-6 py-3 rounded-lg font-bold transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
-                            Download {activeTierData?.name || 'Inclusions'} Brochure
-                        </a>
+                            {generating ? (
+                                <>
+                                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                                    Generating...
+                                </>
+                            ) : (
+                                <>
+                                    <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
+                                    Download {activeTierData?.name || 'Designer'} Brochure
+                                </>
+                            )}
+                        </button>
                         <p className="text-xs text-gray-400 mt-2">
                             PDF brochure with full specifications
                         </p>
@@ -135,3 +185,4 @@ export default function PropertyInclusions() {
         </div>
     )
 }
+

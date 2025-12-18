@@ -10,8 +10,9 @@ async function getProperties(searchParams: any) {
     if (!params.has('limit')) params.set('limit', '12')
 
     try {
-        const apiUrl = ''
-        const res = await fetch(`${apiUrl}/properties?${params.toString()}`, {
+        // Use absolute URL for server-side fetch, fallback to relative for client
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+        const res = await fetch(`${baseUrl}/api/properties?${params.toString()}`, {
             cache: 'no-store' // Ensure fresh data on each request for filters
         })
 
