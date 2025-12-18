@@ -16,7 +16,7 @@
     "better-auth": "^1.2.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "drizzle-orm": "^0.41.0",
+    "drizzle-orm": "^0.38.3",
     "express": "^4.21.2",
     "helmet": "^8.0.0",
     "jspdf": "^3.0.4",
