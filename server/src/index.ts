@@ -44,6 +44,26 @@ const app = express();
         app.use(express.json());
         app.use(express.urlencoded({ extended: true }));
 
+        // Cache control middleware - Prevents stale HTML cache issues
+        app.use((req, res, next) => {
+            const path = req.path;
+
+            // Static assets from _next should be cached aggressively (content-hashed, immutable)
+            if (path.startsWith('/_next/static/')) {
+                res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+            }
+            // Images can be cached for a moderate time
+            else if (path.match(/\.(jpg|jpeg|png|gif|webp|svg|ico)$/)) {
+                res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+            }
+            // HTML pages should not be cached long to prevent stale references to CSS/JS chunks
+            else if (path.endsWith('.html') || !path.includes('.')) {
+                res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=60, must-revalidate');
+            }
+
+            next();
+        });
+
         // Health check
         app.get("/health", (req, res) => {
             res.json({ status: "ok", timestamp: new Date().toISOString() });
