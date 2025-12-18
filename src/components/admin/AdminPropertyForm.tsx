@@ -72,7 +72,7 @@ export default function AdminPropertyForm({ initialData, isEditing = false, id }
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const desRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/designs?limit=100`)
+                const desRes = await fetch(`/api/designs?limit=100`)
                 const desData = await desRes.json()
                 setDesigns(desData.data || [])
             } catch (e) {
@@ -100,8 +100,8 @@ export default function AdminPropertyForm({ initialData, isEditing = false, id }
             }
 
             const url = isEditing
-                ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/properties/${id}`
-                : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/properties`
+                ? `/api/properties/${id}`
+                : `/api/properties`
 
             const res = await fetch(url, {
                 method: isEditing ? 'PUT' : 'POST',

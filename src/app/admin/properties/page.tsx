@@ -11,7 +11,7 @@ export default function AdminProperties() {
     useEffect(() => {
         const fetchProperties = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/properties?limit=100`)
+                const res = await fetch(`/api/properties?limit=100`)
                 const data = await res.json()
                 setProperties(data.data || [])
             } catch (err) {
@@ -27,7 +27,7 @@ export default function AdminProperties() {
         if (!confirm('Are you sure you want to delete this property?')) return
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/properties/${id}`, {
+            const res = await fetch(`/api/properties/${id}`, {
                 method: 'DELETE',
                 // Add headers for auth if needed later
             })
@@ -95,8 +95,8 @@ export default function AdminProperties() {
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${property.isActive
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-gray-100 text-gray-800'
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-gray-100 text-gray-800'
                                         }`}>
                                         {property.isActive ? 'Active' : 'Draft'}
                                     </span>

@@ -13,7 +13,7 @@ export default function EditPropertyClient() {
     useEffect(() => {
         const fetchProperty = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/properties/${id}`)
+                const res = await fetch(`/api/properties/${id}`)
                 if (res.ok) {
                     const data = await res.json()
                     setProperty(data.data)

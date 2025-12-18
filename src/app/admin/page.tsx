@@ -16,11 +16,11 @@ export default function AdminDashboard() {
             try {
                 // In a real app we'd have a specific stats endpoint or fetch counts in parallel
                 // Just fetching one endpoint for demo of connectivity
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/properties`)
+                const res = await fetch(`/api/properties`)
                 const data = await res.json()
 
                 // Also fetch designs
-                const desRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/designs`)
+                const desRes = await fetch(`/api/designs`)
                 const desData = await desRes.json()
 
                 setStats({

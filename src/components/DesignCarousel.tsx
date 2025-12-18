@@ -13,7 +13,7 @@ export default function DesignCarousel() {
     useEffect(() => {
         const fetchDesigns = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/designs`)
+                const res = await fetch(`/api/designs`)
                 if (!res.ok) throw new Error('Failed to fetch')
                 const data = await res.json()
 

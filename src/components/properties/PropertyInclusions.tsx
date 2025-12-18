@@ -28,7 +28,7 @@ export default function PropertyInclusions() {
     useEffect(() => {
         const fetchTiers = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/inclusions/tiers`)
+                const res = await fetch(`/api/inclusions/tiers`)
                 const data = await res.json()
                 if (data.success && data.data.length > 0) {
                     setTiers(data.data)
@@ -49,7 +49,7 @@ export default function PropertyInclusions() {
         const fetchData = async () => {
             setLoading(true)
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/inclusions/tiers/${activeTier}`)
+                const res = await fetch(`/api/inclusions/tiers/${activeTier}`)
                 const data = await res.json()
                 if (data.success) {
                     setCategories(data.data.categories)
@@ -76,8 +76,8 @@ export default function PropertyInclusions() {
                         key={tier.id}
                         onClick={() => setActiveTier(tier.slug)}
                         className={`px-5 py-2 rounded-md font-medium text-sm transition-all ${activeTier === tier.slug
-                                ? 'bg-white dark:bg-gray-700 text-brand-charcoal dark:text-white shadow-sm'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                            ? 'bg-white dark:bg-gray-700 text-brand-charcoal dark:text-white shadow-sm'
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                             }`}
                     >
                         {tier.name}

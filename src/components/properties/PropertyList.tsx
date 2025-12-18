@@ -10,7 +10,7 @@ async function getProperties(searchParams: any) {
     if (!params.has('limit')) params.set('limit', '12')
 
     try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+        const apiUrl = ''
         const res = await fetch(`${apiUrl}/properties?${params.toString()}`, {
             cache: 'no-store' // Ensure fresh data on each request for filters
         })
