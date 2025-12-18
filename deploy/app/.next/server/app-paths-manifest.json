@@ -1,0 +1,22 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/about/page": "app/about/page.js",
+  "/admin/inclusions/page": "app/admin/inclusions/page.js",
+  "/admin/login/page": "app/admin/login/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/properties/[id]/page": "app/admin/properties/[id]/page.js",
+  "/admin/properties/new/page": "app/admin/properties/new/page.js",
+  "/admin/properties/page": "app/admin/properties/page.js",
+  "/admin/studio/page": "app/admin/studio/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/custom-process/page": "app/custom-process/page.js",
+  "/facades/page": "app/facades/page.js",
+  "/gallery/page": "app/gallery/page.js",
+  "/inclusions/page": "app/inclusions/page.js",
+  "/interiors/page": "app/interiors/page.js",
+  "/page": "app/page.js",
+  "/properties/[id]/page": "app/properties/[id]/page.js",
+  "/properties/page": "app/properties/page.js",
+  "/studio/page": "app/studio/page.js"
+}

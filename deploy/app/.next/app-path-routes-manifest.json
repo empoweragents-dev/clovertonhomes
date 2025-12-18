@@ -1,0 +1,22 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/about/page": "/about",
+  "/admin/inclusions/page": "/admin/inclusions",
+  "/admin/login/page": "/admin/login",
+  "/admin/page": "/admin",
+  "/admin/properties/[id]/page": "/admin/properties/[id]",
+  "/admin/properties/new/page": "/admin/properties/new",
+  "/admin/properties/page": "/admin/properties",
+  "/admin/studio/page": "/admin/studio",
+  "/contact/page": "/contact",
+  "/custom-process/page": "/custom-process",
+  "/facades/page": "/facades",
+  "/gallery/page": "/gallery",
+  "/inclusions/page": "/inclusions",
+  "/interiors/page": "/interiors",
+  "/page": "/",
+  "/properties/[id]/page": "/properties/[id]",
+  "/properties/page": "/properties",
+  "/studio/page": "/studio"
+}
