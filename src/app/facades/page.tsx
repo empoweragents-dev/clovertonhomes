@@ -36,7 +36,7 @@ export default function FacadesPage() {
     useEffect(() => {
         const fetchFacades = async () => {
             try {
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+                const apiUrl = '/api'
                 const res = await fetch(`${apiUrl}/studio/facades`)
                 if (res.ok) {
                     const data = await res.json()

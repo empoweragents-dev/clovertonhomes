@@ -87,7 +87,7 @@ export default function DesignStudioPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+                const apiUrl = '/api'
 
                 const [floorPlanRes, facadeRes] = await Promise.all([
                     fetch(`${apiUrl}/studio/floor-plans`),
@@ -150,7 +150,7 @@ export default function DesignStudioPage() {
         setIsSubmitting(true)
 
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+            const apiUrl = '/api'
             const res = await fetch(`${apiUrl}/studio/submissions`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

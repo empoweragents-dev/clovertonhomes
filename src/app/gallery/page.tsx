@@ -53,7 +53,7 @@ export default function GalleryPage() {
     useEffect(() => {
         const fetchImages = async () => {
             try {
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+                const apiUrl = '/api'
                 const res = await fetch(`${apiUrl}/gallery/images`)
                 if (res.ok) {
                     const data = await res.json()

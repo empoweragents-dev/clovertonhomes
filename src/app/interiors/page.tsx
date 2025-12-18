@@ -135,7 +135,7 @@ export default function InteriorsPage() {
     useEffect(() => {
         const fetchSchemes = async () => {
             try {
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+                const apiUrl = '/api'
                 const res = await fetch(`${apiUrl}/gallery/schemes`)
                 if (res.ok) {
                     const data = await res.json()

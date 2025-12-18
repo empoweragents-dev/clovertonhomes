@@ -10,8 +10,11 @@ async function getProperties(searchParams: any) {
     if (!params.has('limit')) params.set('limit', '12')
 
     try {
-        // Use absolute URL for server-side fetch, fallback to relative for client
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+        // Use absolute URL for server-side fetch
+        // Priority: NEXT_PUBLIC_SITE_URL > VERCEL_URL > production domain > localhost
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ||
+            (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+            'https://clovertonhomes.com.au'
         const res = await fetch(`${baseUrl}/api/properties?${params.toString()}`, {
             cache: 'no-store' // Ensure fresh data on each request for filters
         })
