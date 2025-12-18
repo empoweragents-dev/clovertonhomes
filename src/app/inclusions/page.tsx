@@ -14,7 +14,7 @@ export default function InclusionsPage() {
         // Fetch Tiers on mount
         const fetchTiers = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/inclusions/tiers`)
+                const res = await fetch(`/api/inclusions/tiers`)
                 const data = await res.json()
                 if (data.success && data.data.length > 0) {
                     setTiers(data.data)
@@ -40,7 +40,7 @@ export default function InclusionsPage() {
         const fetchData = async () => {
             setContentLoading(true)
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/inclusions/tiers/${activeTier}`)
+                const res = await fetch(`/api/inclusions/tiers/${activeTier}`)
                 const data = await res.json()
                 if (data.success) {
                     setCategories(data.data.categories)

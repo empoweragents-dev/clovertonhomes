@@ -75,8 +75,8 @@ export default function InclusionsManagement({ initialCategories }: InclusionsMa
         setLoading(true)
         try {
             const [tiersRes, catsRes] = await Promise.all([
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/inclusions/tiers`),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/inclusions/categories`)
+                fetch(`/api/inclusions/tiers`),
+                fetch(`/api/inclusions/categories`)
             ])
 
             const tiersData = await tiersRes.json()
@@ -102,7 +102,7 @@ export default function InclusionsManagement({ initialCategories }: InclusionsMa
         if (!tier) return
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/inclusions/tiers/${tier.slug}`)
+            const res = await fetch(`/api/inclusions/tiers/${tier.slug}`)
             const data = await res.json()
             if (data.success) {
                 setTierData(data.data.categories)
@@ -121,7 +121,7 @@ export default function InclusionsManagement({ initialCategories }: InclusionsMa
 
         setUploading(true)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/upload?bucket=GENERAL&folder=inclusions`, {
+            const res = await fetch(`/api/upload?bucket=GENERAL&folder=inclusions`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_session')}` },
                 body: formData
@@ -146,7 +146,7 @@ export default function InclusionsManagement({ initialCategories }: InclusionsMa
         const token = localStorage.getItem('admin_session')
 
         try {
-            let url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/inclusions/`
+            let url = `/api/inclusions/`
             let method = editData ? 'PUT' : 'POST'
             let body = {}
 
@@ -193,7 +193,7 @@ export default function InclusionsManagement({ initialCategories }: InclusionsMa
         if (!confirm('Are you sure?')) return
         const token = localStorage.getItem('admin_session')
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/inclusions/${type}/${id}`, {
+            const res = await fetch(`/api/inclusions/${type}/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             })
