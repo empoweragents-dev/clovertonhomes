@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npm run build:server && next build",
-    "build:server": "cd server && tsc",
+    "build:server": "cd server && npx tsc",
     "start": "node server/dist/index.js",
     "lint": "next lint",
     "db:push": "cd server && drizzle-kit push",
