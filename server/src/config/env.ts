@@ -20,6 +20,9 @@ export const env = {
 
     // Frontend
     FRONTEND_URL: process.env.FRONTEND_URL || "http://localhost:3000",
+
+    // Brevo Email Service
+    BREVO_API_KEY: process.env.BREVO_API_KEY || "",
 };
 
 // Validate required environment variables

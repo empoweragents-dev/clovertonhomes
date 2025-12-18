@@ -9,3 +9,5 @@ export { inclusionService } from "./inclusionService";
 export { favoriteService } from "./favoriteService";
 export { settingsService } from "./settingsService";
 export { uploadService } from "./uploadService";
+export { emailService } from "./emailService";
+

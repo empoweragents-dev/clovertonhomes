@@ -1,6 +1,7 @@
 import { db } from "../config/database";
 import { enquiries, Enquiry, NewEnquiry, properties, homeDesigns, consultants } from "../db/schema";
 import { eq, and, desc } from "drizzle-orm";
+import { emailService } from "./emailService";
 
 export interface EnquiryFilters {
     type?: string;
@@ -76,7 +77,47 @@ export const enquiryService = {
     // Create enquiry (public)
     async create(data: Omit<NewEnquiry, "id" | "createdAt" | "updatedAt">): Promise<Enquiry> {
         const result = await db.insert(enquiries).values({ ...data, status: "new" }).returning();
-        return result[0];
+        const enquiry = result[0];
+
+        // Send email notifications (async, don't wait)
+        this.sendEnquiryEmails(enquiry).catch(err => {
+            console.error("Failed to send enquiry emails:", err);
+        });
+
+        return enquiry;
+    },
+
+    // Send enquiry emails (internal helper)
+    async sendEnquiryEmails(enquiry: Enquiry): Promise<void> {
+        // Get related property/design titles if they exist
+        let propertyTitle: string | undefined;
+        let designTitle: string | undefined;
+
+        if (enquiry.propertyId) {
+            const propResult = await db.select().from(properties).where(eq(properties.id, enquiry.propertyId));
+            propertyTitle = propResult[0]?.title;
+        }
+        if (enquiry.designId) {
+            const designResult = await db.select().from(homeDesigns).where(eq(homeDesigns.id, enquiry.designId));
+            designTitle = designResult[0]?.name;
+        }
+
+        // Build full name from firstName and lastName
+        const fullName = [enquiry.firstName, enquiry.lastName].filter(Boolean).join(" ");
+
+        // Send notification to admin
+        await emailService.sendEnquiryNotification({
+            name: fullName,
+            email: enquiry.email,
+            phone: enquiry.phone || undefined,
+            message: enquiry.message || "No message provided",
+            type: enquiry.type || undefined,
+            propertyTitle,
+            designTitle,
+        });
+
+        // Send confirmation to customer
+        await emailService.sendEnquiryConfirmation(enquiry.email, fullName);
     },
 
     // Update enquiry status (admin)
