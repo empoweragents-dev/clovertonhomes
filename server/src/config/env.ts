@@ -24,10 +24,10 @@ export const env = {
     // Brevo Email Service (legacy API key, kept for compatibility)
     BREVO_API_KEY: process.env.BREVO_API_KEY || "",
 
-    // SMTP (free relay, e.g. Brevo smtp-relay.brevo.com:587)
-    SMTP_HOST: process.env.SMTP_HOST || "smtp-relay.brevo.com",
-    SMTP_PORT: parseInt(process.env.SMTP_PORT || "587"),
-    SMTP_USER: process.env.SMTP_USER || "",
+    // SMTP (Hostinger mailbox: smtp.hostinger.com:465 SSL)
+    SMTP_HOST: process.env.SMTP_HOST || "smtp.hostinger.com",
+    SMTP_PORT: parseInt(process.env.SMTP_PORT || "465"),
+    SMTP_USER: process.env.SMTP_USER || "info@clovertonhomes.com.au",
     SMTP_PASS: process.env.SMTP_PASS || "",
     // Where enquiry notifications are delivered, and the From address used.
     MAIL_TO: process.env.MAIL_TO || "info@clovertonhomes.com.au",

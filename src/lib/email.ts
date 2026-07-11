@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer";
 
-const SMTP_HOST = process.env.SMTP_HOST || "smtp-relay.brevo.com";
-const SMTP_PORT = parseInt(process.env.SMTP_PORT || "587");
-const SMTP_USER = process.env.SMTP_USER || "";
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.hostinger.com";
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || "465");
+const SMTP_USER = process.env.SMTP_USER || "info@clovertonhomes.com.au";
 const SMTP_PASS = process.env.SMTP_PASS || "";
 const MAIL_TO = process.env.MAIL_TO || "info@clovertonhomes.com.au";
 const MAIL_FROM = process.env.MAIL_FROM || "info@clovertonhomes.com.au";
