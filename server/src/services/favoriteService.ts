@@ -1,6 +1,7 @@
 import { db } from "../config/database";
 import { favorites, Favorite, NewFavorite, properties, homeDesigns } from "../db/schema";
 import { eq, and } from "drizzle-orm";
+import { insertReturning } from "../db/helpers";
 
 export const favoriteService = {
     // Get user's favorites
@@ -35,17 +36,14 @@ export const favoriteService = {
 
     // Add favorite
     async addFavorite(userId: string, propertyId?: string, designId?: string): Promise<Favorite> {
-        const result = await db.insert(favorites)
-            .values({ userId, propertyId, designId })
-            .returning();
-        return result[0];
+        return insertReturning<Favorite>(favorites, { userId, propertyId, designId });
     },
 
     // Remove favorite
     async removeFavorite(id: string, userId: string): Promise<boolean> {
-        const result = await db.delete(favorites)
+        const result: any = await db.delete(favorites)
             .where(and(eq(favorites.id, id), eq(favorites.userId, userId)));
-        return result.length > 0;
+        return result[0].affectedRows > 0;
     },
 
     // Check if item is favorited

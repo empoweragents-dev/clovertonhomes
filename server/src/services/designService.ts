@@ -1,7 +1,8 @@
 import { db } from "../config/database";
 import { homeDesigns, designImages, designFloorplans, HomeDesign, NewHomeDesign, DesignImage, NewDesignImage } from "../db/schema";
-import { eq, and, desc, ilike, gte, lte, inArray } from "drizzle-orm";
+import { eq, and, desc, like, gte, lte, inArray } from "drizzle-orm";
 import slugify from "slugify";
+import { insertReturning, updateReturning } from "../db/helpers";
 
 export interface DesignFilters {
     category?: string;
@@ -40,7 +41,7 @@ export const designService = {
             conditions.push(lte(homeDesigns.priceFrom, filters.maxPrice));
         }
         if (filters.search) {
-            conditions.push(ilike(homeDesigns.name, `%${filters.search}%`));
+            conditions.push(like(homeDesigns.name, `%${filters.search}%`));
         }
         if (filters.featured) {
             conditions.push(eq(homeDesigns.isFeatured, true));
@@ -108,8 +109,7 @@ export const designService = {
     // Create design
     async create(data: Omit<NewHomeDesign, "id" | "slug" | "createdAt" | "updatedAt">): Promise<HomeDesign> {
         const slug = slugify(data.name, { lower: true, strict: true });
-        const result = await db.insert(homeDesigns).values({ ...data, slug }).returning();
-        return result[0];
+        return insertReturning<HomeDesign>(homeDesigns, { ...data, slug });
     },
 
     // Update design
@@ -117,28 +117,23 @@ export const designService = {
         if (data.name) {
             data.slug = slugify(data.name, { lower: true, strict: true });
         }
-        const result = await db.update(homeDesigns)
-            .set({ ...data, updatedAt: new Date() })
-            .where(eq(homeDesigns.id, id))
-            .returning();
-        return result[0];
+        return updateReturning<HomeDesign>(homeDesigns, id, { ...data, updatedAt: new Date() });
     },
 
     // Add image to design
     async addImage(designId: string, imageData: Omit<NewDesignImage, "id" | "designId">): Promise<DesignImage> {
-        const result = await db.insert(designImages).values({ ...imageData, designId }).returning();
-        return result[0];
+        return insertReturning<DesignImage>(designImages, { ...imageData, designId });
     },
 
     // Delete image
     async deleteImage(imageId: string): Promise<boolean> {
-        const result = await db.delete(designImages).where(eq(designImages.id, imageId));
-        return result.length > 0;
+        const result: any = await db.delete(designImages).where(eq(designImages.id, imageId));
+        return result[0].affectedRows > 0;
     },
 
     // Delete design (soft delete)
     async delete(id: string): Promise<boolean> {
-        const result = await db.update(homeDesigns).set({ isActive: false }).where(eq(homeDesigns.id, id));
-        return result.length > 0;
+        const result: any = await db.update(homeDesigns).set({ isActive: false }).where(eq(homeDesigns.id, id));
+        return result[0].affectedRows > 0;
     },
 };

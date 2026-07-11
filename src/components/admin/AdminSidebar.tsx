@@ -3,6 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { signOut } from '@/lib/authClient'
 
 export default function AdminSidebar() {
     const pathname = usePathname()
@@ -18,8 +19,8 @@ export default function AdminSidebar() {
         { label: 'Settings', href: '/admin/settings', icon: 'settings' },
     ]
 
-    const handleLogout = () => {
-        localStorage.removeItem('admin_session')
+    const handleLogout = async () => {
+        try { await signOut() } catch { /* ignore */ }
         router.push('/admin/login')
     }
 

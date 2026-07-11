@@ -1,18 +1,25 @@
-import Brevo from "@getbrevo/brevo";
+import nodemailer from "nodemailer";
 import { env } from "../config/env";
-
-// Initialize Brevo API instance
-const apiInstance = new Brevo.TransactionalEmailsApi();
-apiInstance.setApiKey(
-    Brevo.TransactionalEmailsApiApiKeys.apiKey,
-    env.BREVO_API_KEY
-);
 
 // Default sender configuration
 const defaultSender = {
     name: "Cloverton Homes",
-    email: "info@clovertonhomes.com.au",
+    email: env.MAIL_FROM,
 };
+
+// Lazily-created SMTP transport (Brevo free relay by default).
+let transporter: nodemailer.Transporter | null = null;
+function getTransport(): nodemailer.Transporter {
+    if (!transporter) {
+        transporter = nodemailer.createTransport({
+            host: env.SMTP_HOST,
+            port: env.SMTP_PORT,
+            secure: env.SMTP_PORT === 465, // 465 = implicit TLS; 587 = STARTTLS
+            auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
+        });
+    }
+    return transporter;
+}
 
 export interface EmailOptions {
     to: { email: string; name?: string }[];
@@ -25,29 +32,29 @@ export interface EmailOptions {
 
 export const emailService = {
     /**
-     * Send a transactional email using Brevo
+     * Send a transactional email over SMTP (Brevo relay / any SMTP provider).
      */
     async sendEmail(options: EmailOptions): Promise<{ success: boolean; messageId?: string; error?: string }> {
+        if (!env.SMTP_USER || !env.SMTP_PASS) {
+            const msg = "SMTP not configured (SMTP_USER/SMTP_PASS missing) — skipping email send";
+            console.warn(msg);
+            return { success: false, error: msg };
+        }
         try {
-            const sendSmtpEmail = new Brevo.SendSmtpEmail();
+            const sender = options.sender || defaultSender;
+            const info = await getTransport().sendMail({
+                from: { name: sender.name, address: sender.email },
+                to: options.to.map(t => (t.name ? { name: t.name, address: t.email } : t.email)) as any,
+                subject: options.subject,
+                html: options.htmlContent,
+                text: options.textContent,
+                replyTo: options.replyTo
+                    ? { name: options.replyTo.name || "", address: options.replyTo.email }
+                    : undefined,
+            });
 
-            sendSmtpEmail.sender = options.sender || defaultSender;
-            sendSmtpEmail.to = options.to;
-            sendSmtpEmail.subject = options.subject;
-            sendSmtpEmail.htmlContent = options.htmlContent;
-
-            if (options.textContent) {
-                sendSmtpEmail.textContent = options.textContent;
-            }
-
-            if (options.replyTo) {
-                sendSmtpEmail.replyTo = options.replyTo;
-            }
-
-            const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
-
-            console.log("Email sent successfully:", result.body?.messageId);
-            return { success: true, messageId: result.body?.messageId };
+            console.log("Email sent successfully:", info.messageId);
+            return { success: true, messageId: info.messageId };
         } catch (error: any) {
             console.error("Failed to send email:", error?.message || error);
             return { success: false, error: error?.message || "Failed to send email" };
@@ -127,7 +134,7 @@ export const emailService = {
         `;
 
         return this.sendEmail({
-            to: [{ email: "info@clovertonhomes.com.au", name: "Cloverton Homes" }],
+            to: [{ email: env.MAIL_TO, name: "Cloverton Homes" }],
             subject,
             htmlContent,
             replyTo: { email: enquiry.email, name: enquiry.name },

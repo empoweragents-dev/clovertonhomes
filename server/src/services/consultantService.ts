@@ -1,6 +1,7 @@
 import { db } from "../config/database";
 import { consultants, Consultant, NewConsultant } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { insertReturning, updateReturning } from "../db/helpers";
 
 export const consultantService = {
     // Get all active consultants
@@ -16,19 +17,17 @@ export const consultantService = {
 
     // Create consultant
     async create(data: Omit<NewConsultant, "id" | "createdAt">): Promise<Consultant> {
-        const result = await db.insert(consultants).values(data).returning();
-        return result[0];
+        return insertReturning<Consultant>(consultants, data);
     },
 
     // Update consultant
     async update(id: string, data: Partial<NewConsultant>): Promise<Consultant | undefined> {
-        const result = await db.update(consultants).set(data).where(eq(consultants.id, id)).returning();
-        return result[0];
+        return updateReturning<Consultant>(consultants, id, data);
     },
 
     // Delete consultant (soft delete)
     async delete(id: string): Promise<boolean> {
-        const result = await db.update(consultants).set({ isActive: false }).where(eq(consultants.id, id));
-        return result.length > 0;
+        const result: any = await db.update(consultants).set({ isActive: false }).where(eq(consultants.id, id));
+        return result[0].affectedRows > 0;
     },
 };

@@ -2,6 +2,7 @@ import { db } from "../config/database";
 import { regions, Region, NewRegion } from "../db/schema";
 import { eq } from "drizzle-orm";
 import slugify from "slugify";
+import { insertReturning, updateReturning } from "../db/helpers";
 
 export const regionService = {
     // Get all active regions
@@ -24,8 +25,7 @@ export const regionService = {
     // Create region
     async create(data: Omit<NewRegion, "id" | "slug" | "createdAt">): Promise<Region> {
         const slug = slugify(data.name, { lower: true, strict: true });
-        const result = await db.insert(regions).values({ ...data, slug }).returning();
-        return result[0];
+        return insertReturning<Region>(regions, { ...data, slug });
     },
 
     // Update region
@@ -33,13 +33,12 @@ export const regionService = {
         if (data.name) {
             data.slug = slugify(data.name, { lower: true, strict: true });
         }
-        const result = await db.update(regions).set(data).where(eq(regions.id, id)).returning();
-        return result[0];
+        return updateReturning<Region>(regions, id, data);
     },
 
     // Delete region (soft delete)
     async delete(id: string): Promise<boolean> {
-        const result = await db.update(regions).set({ isActive: false }).where(eq(regions.id, id)).returning();
-        return result.length > 0;
+        const result: any = await db.update(regions).set({ isActive: false }).where(eq(regions.id, id));
+        return result[0].affectedRows > 0;
     },
 };

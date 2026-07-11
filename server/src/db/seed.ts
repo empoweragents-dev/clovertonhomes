@@ -1,6 +1,6 @@
 
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
 import * as dotenv from "dotenv";
 import * as schema from "./schema";
 import {
@@ -17,8 +17,8 @@ if (!process.env.DATABASE_URL) {
     throw new Error("DATABASE_URL is not set");
 }
 
-const client = postgres(process.env.DATABASE_URL);
-const db = drizzle(client, { schema });
+const pool = mysql.createPool({ uri: process.env.DATABASE_URL });
+const db = drizzle(pool, { schema, mode: "default" });
 
 const main = async () => {
     console.log("🌱 Starting seed...");
@@ -38,32 +38,25 @@ const main = async () => {
 
         // 2. Insert Admin User
         console.log("Inserting admin user...");
-        const adminUser = await db.insert(user).values({
-            id: uuidv4(),
+        const adminUserId = uuidv4();
+        await db.insert(user).values({
+            id: adminUserId,
             name: "Admin User",
             email: "admin@clovertonhomes.com.au",
             emailVerified: true,
             role: "admin",
             createdAt: new Date(),
             updatedAt: new Date(),
-        }).returning();
+        });
 
-        // Note: Password hashing is usually handled by Better Auth internally or via a separate auth seed. 
-        // For now, we will assume the initial login flow or a separate set-password mechanism will be used,
-        // or we manually insert a known hashed password if Better Auth requires it for email/password.
-        // Since we are using Better Auth, we might need to register the user via API or helper, 
-        // but for seeding raw DB we insert the user record.
-        // *Correction*: Better Auth stores password hash in 'account' table usually for email-password provider.
-
-        // Simulating a dummy account record (In real app, use auth API to register)
+        // Note: Password hashing is handled by Better Auth. This placeholder account row
+        // exists for FK shape; for a real login, register via the auth API.
         await db.insert(account).values({
             id: uuidv4(),
-            userId: adminUser[0].id,
-            accountId: adminUser[0].id, // usually same as user id for internal
-            providerId: "credential", // or 'email-password'
-            password: "password123", // WARNING: In production this MUST be hashed. For dev/seed we'll leave plain text if using a custom local auth or replace with valid hash.
-            // If using standard Better Auth, you'd typically run a script that uses the auth library to create the user properly.
-            // For this task, we'll placeholder this. The user might need to 'Sign Up' first time or we use a known hash.
+            userId: adminUserId,
+            accountId: adminUserId,
+            providerId: "credential",
+            password: "password123",
         });
 
 
@@ -76,13 +69,13 @@ const main = async () => {
             { name: "Western Suburbs", state: "VIC" },
         ];
 
-        const insertedRegions = await db.insert(regions).values(
-            regionData.map(r => ({
-                name: r.name,
-                slug: slugify(r.name, { lower: true }),
-                state: r.state
-            }))
-        ).returning();
+        const insertedRegions = regionData.map(r => ({
+            id: uuidv4(),
+            name: r.name,
+            slug: slugify(r.name, { lower: true }),
+            state: r.state,
+        }));
+        await db.insert(regions).values(insertedRegions);
 
         // 4. Insert Estates (Including Sydney SW estates)
         console.log("Inserting estates...");
@@ -97,17 +90,19 @@ const main = async () => {
             { name: "Woodlea", regionName: "Western Suburbs", description: "A modern community in Aintree." },
         ];
 
-        const insertedEstates = [];
+        const insertedEstates: { id: string; name: string; regionId: string }[] = [];
         for (const est of estateData) {
             const region = insertedRegions.find(r => r.name === est.regionName);
             if (region) {
-                const [inserted] = await db.insert(estates).values({
+                const estateId = uuidv4();
+                await db.insert(estates).values({
+                    id: estateId,
                     name: est.name,
                     slug: slugify(est.name, { lower: true }),
                     regionId: region.id,
                     description: est.description
-                }).returning();
-                insertedEstates.push(inserted);
+                });
+                insertedEstates.push({ id: estateId, name: est.name, regionId: region.id });
             }
         }
 
@@ -122,20 +117,23 @@ const main = async () => {
             { name: "Avalon 42", priceFrom: 55000000, bedrooms: 5, bathrooms: 4, garages: 2, storeys: "double", category: "double_storey", squareMeters: 390, landWidth: "16.00", landDepth: "32.00", featuredImage: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80" },
         ];
 
-        const insertedDesigns = [];
+        const insertedDesigns: any[] = [];
         for (const des of designData) {
-            const [inserted] = await db.insert(homeDesigns).values({
+            const designId = uuidv4();
+            const inserted = {
+                id: designId,
                 ...des,
                 slug: slugify(des.name, { lower: true }),
                 storeys: des.storeys as any,
                 category: des.category as any,
                 description: `Beautiful ${des.category} home design.`
-            }).returning();
+            };
+            await db.insert(homeDesigns).values(inserted);
             insertedDesigns.push(inserted);
 
             await db.insert(designImages).values([
-                { designId: inserted.id, imageUrl: des.featuredImage, altText: "Facade" },
-                { designId: inserted.id, imageUrl: "https://images.unsplash.com/photo-1556912173-3db9963f638f?auto=format&fit=crop&w=1000&q=80", altText: "Interior" }
+                { id: uuidv4(), designId, imageUrl: des.featuredImage, altText: "Facade" },
+                { id: uuidv4(), designId, imageUrl: "https://images.unsplash.com/photo-1556912173-3db9963f638f?auto=format&fit=crop&w=1000&q=80", altText: "Interior" }
             ]);
         }
 
@@ -150,7 +148,8 @@ const main = async () => {
             { name: "Premium", slug: "premium", description: "Luxury inclusions for the ultimate lifestyle.", sortOrder: 3 },
         ];
 
-        const insertedTiers = await db.insert(schema.inclusionTiers).values(tiers).returning();
+        const insertedTiers = tiers.map(t => ({ ...t, id: uuidv4() }));
+        await db.insert(schema.inclusionTiers).values(insertedTiers);
 
         // 2. Categories & Items (Adapted from src/data/inclusions.ts)
         const inclusionCategoriesData = [
@@ -388,12 +387,14 @@ const main = async () => {
 
         for (const catData of inclusionCategoriesData) {
             // Insert Category
-            const [category] = await db.insert(schema.inclusionCategories).values({
+            const categoryId = uuidv4();
+            await db.insert(schema.inclusionCategories).values({
+                id: categoryId,
                 name: catData.name,
                 slug: slugify(catData.name, { lower: true }),
                 headline: catData.headline,
                 sortOrder: catData.sortOrder
-            }).returning();
+            });
 
             // Insert Items for each Tier
             for (const tierName of Object.keys(catData.items)) {
@@ -404,8 +405,9 @@ const main = async () => {
                     // @ts-ignore
                     const itemData = catData.items[tierName];
                     await db.insert(schema.inclusionItems).values({
+                        id: uuidv4(),
                         tierId: tier.id,
-                        categoryId: category.id,
+                        categoryId: categoryId,
                         title: itemData.title,
                         description: itemData.description,
                         badge: itemData.badge,

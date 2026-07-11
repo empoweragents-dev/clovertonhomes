@@ -43,7 +43,17 @@ export default function InclusionsPage() {
                 const res = await fetch(`/api/inclusions/tiers/${activeTier}`)
                 const data = await res.json()
                 if (data.success) {
-                    setCategories(data.data.categories)
+                    // Normalize features to arrays (MariaDB JSON can arrive as a string).
+                    const cats = (data.data.categories || []).map((cat: any) => ({
+                        ...cat,
+                        items: (cat.items || []).map((item: any) => ({
+                            ...item,
+                            features: Array.isArray(item.features)
+                                ? item.features
+                                : (() => { try { const p = JSON.parse(item.features); return Array.isArray(p) ? p : [] } catch { return [] } })(),
+                        })),
+                    }))
+                    setCategories(cats)
                 }
             } catch (error) {
                 console.error("Failed to fetch inclusion data:", error)

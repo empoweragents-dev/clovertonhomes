@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import AdminSidebar from '@/components/admin/AdminSidebar'
+import { getSession } from '@/lib/authClient'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter()
@@ -17,19 +18,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             return
         }
 
-        // Check auth on client side only
-        const checkAuth = () => {
-            const session = localStorage.getItem('admin_session')
-            if (!session) {
-                setAuthState('unauthorized')
-                router.push('/admin/login')
-            } else {
-                setAuthState('authorized')
+        // Verify a real better-auth session with an admin role.
+        let cancelled = false
+        const checkAuth = async () => {
+            try {
+                const { data } = await getSession()
+                const role = (data?.user as { role?: string } | undefined)?.role
+                if (!cancelled) {
+                    if (data?.user && role === 'admin') {
+                        setAuthState('authorized')
+                    } else {
+                        setAuthState('unauthorized')
+                        router.push('/admin/login')
+                    }
+                }
+            } catch {
+                if (!cancelled) {
+                    setAuthState('unauthorized')
+                    router.push('/admin/login')
+                }
             }
         }
-
-        // Small delay to ensure we're on client
         checkAuth()
+        return () => { cancelled = true }
     }, [pathname, router])
 
     // Show loading state while checking auth - prevents flash of content

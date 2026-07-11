@@ -29,7 +29,7 @@ export default function AdminProperties() {
         try {
             const res = await fetch(`/api/properties/${id}`, {
                 method: 'DELETE',
-                // Add headers for auth if needed later
+                credentials: 'include',
             })
             if (res.ok) {
                 setProperties(properties.filter(p => p.id !== id))

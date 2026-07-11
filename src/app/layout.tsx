@@ -3,8 +3,8 @@ import './globals.css'
 import LayoutWrapper from '@/components/LayoutWrapper'
 
 export const metadata: Metadata = {
-    title: 'Cloverton Homes - Premium Residential Builder',
-    description: 'Build with confidence. Certified and trusted residential builder.',
+    title: 'Cloverton Homes | Home Designs, House & Land and Custom Builds',
+    description: 'Explore home designs, house and land opportunities, interiors, inclusions, and custom building pathways with Cloverton Homes.',
 }
 
 export default function RootLayout({
@@ -17,7 +17,10 @@ export default function RootLayout({
             <head>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-                <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&family=Outfit:wght@300;400;500;600;700&display=swap"
+                    rel="stylesheet"
+                />
             </head>
             <body className="bg-background-light dark:bg-background-dark font-display antialiased text-brand-charcoal overflow-x-hidden">
                 <LayoutWrapper>
@@ -27,5 +30,3 @@ export default function RootLayout({
         </html>
     )
 }
-
-

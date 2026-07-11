@@ -1,51 +1,52 @@
-import { pgTable, uuid, varchar, text, boolean, timestamp, integer, decimal, pgEnum } from "drizzle-orm/pg-core";
+import { mysqlTable, varchar, text, boolean, timestamp, int, decimal, mysqlEnum } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
+import { randomUUID } from "crypto";
 
-// Enums
-export const storeysEnum = pgEnum("storeys", ["single", "double", "split"]);
-export const designCategoryEnum = pgEnum("design_category", ["popular", "single_storey", "double_storey", "acreage", "dual_occupancy"]);
+// Enum value sets (MySQL defines enums inline on the column)
+export const storeysValues = ["single", "double", "split"] as const;
+export const designCategoryValues = ["popular", "single_storey", "double_storey", "acreage", "dual_occupancy"] as const;
 
 // Home Designs table
-export const homeDesigns = pgTable("home_designs", {
-    id: uuid("id").primaryKey().defaultRandom(),
+export const homeDesigns = mysqlTable("home_designs", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
     name: varchar("name", { length: 150 }).notNull(),
     slug: varchar("slug", { length: 150 }).notNull().unique(),
     description: text("description"),
-    priceFrom: integer("price_from"), // in cents
-    bedrooms: integer("bedrooms").notNull(),
-    bathrooms: integer("bathrooms").notNull(),
-    garages: integer("garages").notNull(),
-    storeys: storeysEnum("storeys").default("single").notNull(),
-    category: designCategoryEnum("category").default("popular").notNull(),
-    squareMeters: integer("square_meters"),
+    priceFrom: int("price_from"), // in cents
+    bedrooms: int("bedrooms").notNull(),
+    bathrooms: int("bathrooms").notNull(),
+    garages: int("garages").notNull(),
+    storeys: mysqlEnum("storeys", storeysValues).default("single").notNull(),
+    category: mysqlEnum("category", designCategoryValues).default("popular").notNull(),
+    squareMeters: int("square_meters"),
     landWidth: decimal("land_width", { precision: 5, scale: 2 }),
     landDepth: decimal("land_depth", { precision: 5, scale: 2 }),
     featuredImage: text("featured_image"),
     badge: varchar("badge", { length: 50 }),
     isFeatured: boolean("is_featured").default(false).notNull(),
     isActive: boolean("is_active").default(true).notNull(),
-    sortOrder: integer("sort_order").default(0),
+    sortOrder: int("sort_order").default(0),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Design Images table (gallery)
-export const designImages = pgTable("design_images", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    designId: uuid("design_id").references(() => homeDesigns.id, { onDelete: "cascade" }).notNull(),
+export const designImages = mysqlTable("design_images", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
+    designId: varchar("design_id", { length: 36 }).references(() => homeDesigns.id, { onDelete: "cascade" }).notNull(),
     imageUrl: text("image_url").notNull(),
     altText: varchar("alt_text", { length: 255 }),
     type: varchar("type", { length: 20 }).default("exterior"), // exterior, interior, floorplan
-    sortOrder: integer("sort_order").default(0),
+    sortOrder: int("sort_order").default(0),
 });
 
 // Design Floorplans table
-export const designFloorplans = pgTable("design_floorplans", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    designId: uuid("design_id").references(() => homeDesigns.id, { onDelete: "cascade" }).notNull(),
+export const designFloorplans = mysqlTable("design_floorplans", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
+    designId: varchar("design_id", { length: 36 }).references(() => homeDesigns.id, { onDelete: "cascade" }).notNull(),
     name: varchar("name", { length: 100 }).notNull(),
     imageUrl: text("image_url").notNull(),
-    sortOrder: integer("sort_order").default(0),
+    sortOrder: int("sort_order").default(0),
 });
 
 // Relations

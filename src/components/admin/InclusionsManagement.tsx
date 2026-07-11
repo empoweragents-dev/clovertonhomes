@@ -123,7 +123,7 @@ export default function InclusionsManagement({ initialCategories }: InclusionsMa
         try {
             const res = await fetch(`/api/upload?bucket=GENERAL&folder=inclusions`, {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_session')}` },
+                credentials: 'include',
                 body: formData
             })
             const data = await res.json()
@@ -143,7 +143,6 @@ export default function InclusionsManagement({ initialCategories }: InclusionsMa
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        const token = localStorage.getItem('admin_session')
 
         try {
             let url = `/api/inclusions/`
@@ -167,10 +166,8 @@ export default function InclusionsManagement({ initialCategories }: InclusionsMa
 
             const res = await fetch(url, {
                 method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify(body)
             })
 
@@ -191,11 +188,10 @@ export default function InclusionsManagement({ initialCategories }: InclusionsMa
 
     const handleDelete = async (id: string, type: 'items' | 'categories' | 'tiers') => {
         if (!confirm('Are you sure?')) return
-        const token = localStorage.getItem('admin_session')
         try {
             const res = await fetch(`/api/inclusions/${type}/${id}`, {
                 method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
+                credentials: 'include',
             })
             if (res.ok) {
                 fetchAllData()

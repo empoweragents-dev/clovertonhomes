@@ -1,38 +1,55 @@
-'use client'
+import Image from 'next/image'
+import Link from 'next/link'
 
 export default function HeroSection() {
     return (
-        <section className="relative h-[80vh] w-full overflow-hidden flex items-center justify-center bg-deep-slate">
-            {/* Background Image acting as video poster */}
-            <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                    backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBsM8Z92VwelpliPVZgS4089S2nb83fO7QB_KT9zRc3KKPkni7mBqG_k5Lmi-GNoGgH6xm30YlqoGaVdpg0NdR_hD3kjtYj1JOVAllg-0mPCNQyFPK1jXxUkYXFlC7ezXSHRog_eyB8HXvGr8_MhovY98-aMDptw6cwWoKIy5JvrI9evyp4DRWPNrQb3NISh6xVgZpyASkPGptYk-cydgG7qfFwaoUAJypn3sNn6lnsd0Wx1HwdGdzG_XGwAgd9zgC0xrGpBjPLGadx')"
-                }}
-                role="img"
-                aria-label="Luxurious modern living room interior with floor to ceiling windows overlooking a pool"
-            ></div>
+        <section className="relative overflow-hidden bg-[#171b1a] text-white">
+            <div className="absolute inset-0" aria-hidden="true">
+                <Image
+                    src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2200&q=85"
+                    alt=""
+                    fill
+                    priority
+                    sizes="100vw"
+                    className="scale-[1.03] object-cover object-center motion-safe:animate-[reveal-soft_900ms_ease-out_both]"
+                />
+                <div
+                    className="absolute inset-0"
+                    style={{ backgroundColor: 'rgba(35, 77, 73, 0.82)' }}
+                />
+                <div
+                    className="absolute inset-0"
+                    style={{ background: 'linear-gradient(180deg, rgba(8, 20, 19, 0.3) 0%, rgba(8, 20, 19, 0.08) 45%, rgba(8, 20, 19, 0.45) 100%)' }}
+                />
+            </div>
 
-            {/* Dark Overlay for Menu Focus */}
-            <div className="absolute inset-0 bg-deep-slate/40 backdrop-blur-[2px]"></div>
-
-            {/* Hero Content */}
-            <div className="relative z-10 text-center px-4 max-w-4xl mx-auto mt-20">
-                <span className="inline-block py-1 px-3 rounded-full border border-white/30 bg-white/10 backdrop-blur-md text-white text-xs font-bold tracking-widest uppercase mb-6 animate-fade-in-up">
-                    Experience Luxury
-                </span>
-                <h2 className="text-5xl md:text-7xl font-bold text-white font-heading leading-tight mb-6 drop-shadow-lg animate-fade-in-up delay-100">
-                    Designed for <br />
-                    <span className="italic text-gray-200 font-display font-light">The Way You Live</span>
-                </h2>
-
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 animate-fade-in-up delay-200">
-                    <button className="h-12 px-8 rounded-full bg-white text-deep-slate font-bold hover:bg-gray-100 transition-colors">
-                        Explore Collections
-                    </button>
-                    <button className="h-12 w-12 rounded-full border border-white/40 bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white hover:text-deep-slate transition-all group">
-                        <span className="material-symbols-outlined fill-current">play_arrow</span>
-                    </button>
+            <div className="home-container relative z-10 flex min-h-[calc(100dvh-4rem)] items-center justify-center py-20 text-center sm:min-h-[calc(100dvh-5rem)]">
+                <div className="max-w-4xl">
+                    <h1
+                        className="reveal-soft font-heading font-semibold text-white"
+                        style={{
+                            fontSize: 'clamp(3.25rem, 8vw, 6.75rem)',
+                            lineHeight: 0.9,
+                            letterSpacing: '-0.065em',
+                            textShadow: '0 3px 18px rgba(0, 0, 0, 0.5)',
+                        }}
+                    >
+                        Designed around the way you live.
+                    </h1>
+                    <p
+                        className="reveal-soft mx-auto mt-6 max-w-xl text-base leading-7 sm:text-lg"
+                        style={{ color: 'rgba(255, 255, 255, 0.94)', textShadow: '0 2px 8px rgba(0, 0, 0, 0.55)', animationDelay: '100ms' }}
+                    >
+                        Explore homes, land, and design possibilities in one place.
+                    </p>
+                    <div className="reveal-soft mt-8 flex flex-col justify-center gap-3 sm:flex-row [animation-delay:180ms]">
+                        <Link href="/designs" className="focus-ring inline-flex min-h-12 items-center justify-center rounded-2xl bg-white px-6 text-sm font-bold text-[#202624] transition hover:bg-[#f4f1ea]">
+                            Explore home designs
+                        </Link>
+                        <Link href="/properties" className="focus-ring inline-flex min-h-12 items-center justify-center rounded-2xl border border-white/30 bg-white/10 px-6 text-sm font-bold text-white backdrop-blur-md transition hover:bg-white hover:text-[#202624]">
+                            Find house &amp; land
+                        </Link>
+                    </div>
                 </div>
             </div>
         </section>

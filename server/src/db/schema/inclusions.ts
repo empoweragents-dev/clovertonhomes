@@ -1,39 +1,41 @@
-import { pgTable, uuid, varchar, text, boolean, integer, json } from "drizzle-orm/pg-core";
+import { mysqlTable, varchar, text, boolean, int } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
+import { randomUUID } from "crypto";
+import { jsonType } from "../customTypes";
 
 // Inclusion Tiers table (e.g., Designer, Elegance)
-export const inclusionTiers = pgTable("inclusion_tiers", {
-    id: uuid("id").primaryKey().defaultRandom(),
+export const inclusionTiers = mysqlTable("inclusion_tiers", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
     name: varchar("name", { length: 100 }).notNull(),
     slug: varchar("slug", { length: 100 }).notNull().unique(),
     description: text("description"),
-    sortOrder: integer("sort_order").default(0),
+    sortOrder: int("sort_order").default(0),
     isActive: boolean("is_active").default(true).notNull(),
 });
 
 // Inclusion Categories table (e.g., Kitchen, Bathroom)
-export const inclusionCategories = pgTable("inclusion_categories", {
-    id: uuid("id").primaryKey().defaultRandom(),
+export const inclusionCategories = mysqlTable("inclusion_categories", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
     name: varchar("name", { length: 100 }).notNull(),
     slug: varchar("slug", { length: 100 }).notNull().unique(),
     icon: varchar("icon", { length: 50 }), // Material symbol name
     headline: varchar("headline", { length: 150 }), // e.g., "Culinary Excellence"
     description: text("description"),
     imageUrl: text("image_url"),
-    sortOrder: integer("sort_order").default(0),
+    sortOrder: int("sort_order").default(0),
 });
 
 // Inclusion Items table
-export const inclusionItems = pgTable("inclusion_items", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    tierId: uuid("tier_id").references(() => inclusionTiers.id, { onDelete: "cascade" }).notNull(),
-    categoryId: uuid("category_id").references(() => inclusionCategories.id, { onDelete: "cascade" }).notNull(),
+export const inclusionItems = mysqlTable("inclusion_items", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
+    tierId: varchar("tier_id", { length: 36 }).references(() => inclusionTiers.id, { onDelete: "cascade" }).notNull(),
+    categoryId: varchar("category_id", { length: 36 }).references(() => inclusionCategories.id, { onDelete: "cascade" }).notNull(),
     title: varchar("title", { length: 200 }).notNull(),
     description: text("description"),
     imageUrl: text("image_url"),
     badge: varchar("badge", { length: 50 }), // e.g., "New Release", "Best Seller"
-    features: json("features").$type<string[]>().default([]), // List of features
-    sortOrder: integer("sort_order").default(0),
+    features: jsonType<string[]>("features"), // List of features
+    sortOrder: int("sort_order").default(0),
 });
 
 // Relations

@@ -20,6 +20,15 @@ interface Category {
     }[]
 }
 
+// MariaDB JSON can arrive as a string; always hand the UI a real array.
+function normalizeFeatures(v: unknown): string[] {
+    if (Array.isArray(v)) return v as string[]
+    if (typeof v === 'string') {
+        try { const p = JSON.parse(v); return Array.isArray(p) ? p : [] } catch { return [] }
+    }
+    return []
+}
+
 export default function PropertyInclusions() {
     const [tiers, setTiers] = useState<Tier[]>([])
     const [activeTier, setActiveTier] = useState<string>('')
@@ -54,7 +63,15 @@ export default function PropertyInclusions() {
                 const res = await fetch(`/api/inclusions/tiers/${activeTier}`)
                 const data = await res.json()
                 if (data.success) {
-                    setCategories(data.data.categories)
+                    // Normalize features to an array (some paths return JSON as a string).
+                    const cats = (data.data.categories || []).map((cat: Category) => ({
+                        ...cat,
+                        items: (cat.items || []).map((item) => ({
+                            ...item,
+                            features: normalizeFeatures((item as { features: unknown }).features),
+                        })),
+                    }))
+                    setCategories(cats)
                 }
             } catch (error) {
                 console.error("Failed to fetch inclusion data:", error)

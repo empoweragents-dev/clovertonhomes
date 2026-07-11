@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn } from '@/lib/authClient'
 
 export default function AdminLogin() {
     const router = useRouter()
@@ -19,22 +20,19 @@ export default function AdminLogin() {
         setError('')
 
         try {
-            // For now we will support a simple client-side check against the seeded credentials
-            // In a real app with Better Auth, we would call authClient.signIn.email({ email, password })
+            const { error: authError } = await signIn.email({
+                email: formData.email,
+                password: formData.password,
+            })
 
-            // Simulating API call delay
-            await new Promise(resolve => setTimeout(resolve, 1000))
-
-            if (formData.email === 'admin@clovertonhomes.com.au' && formData.password === 'password123') {
-                // Set a simple cookie or local storage to persist "session" for this demo
-                // In production, Better Auth handles session cookies automatically
-                localStorage.setItem('admin_session', 'true')
-                router.push('/admin')
-            } else {
-                throw new Error('Invalid credentials')
+            if (authError) {
+                throw new Error(authError.message || 'Invalid credentials')
             }
-        } catch (err) {
-            setError('Invalid email or password')
+
+            router.push('/admin')
+            router.refresh()
+        } catch (err: any) {
+            setError(err?.message || 'Invalid email or password')
         } finally {
             setLoading(false)
         }

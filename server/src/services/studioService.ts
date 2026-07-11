@@ -1,6 +1,7 @@
 import { db } from '../config/database';
-import { studioFloorPlans, studioFacades, studioSubmissions, NewStudioFloorPlan, NewStudioFacade, NewStudioSubmission } from '../db/schema';
+import { studioFloorPlans, studioFacades, studioSubmissions, StudioFloorPlan, NewStudioFloorPlan, StudioFacade, NewStudioFacade, StudioSubmission, NewStudioSubmission } from '../db/schema';
 import { eq, desc, asc, and } from 'drizzle-orm';
+import { insertReturning, updateReturning } from '../db/helpers';
 
 export const studioService = {
     // Floor Plans
@@ -22,16 +23,11 @@ export const studioService = {
     },
 
     async createFloorPlan(data: NewStudioFloorPlan) {
-        const result = await db.insert(studioFloorPlans).values(data).returning();
-        return result[0];
+        return insertReturning<StudioFloorPlan>(studioFloorPlans, data as any);
     },
 
     async updateFloorPlan(id: string, data: Partial<NewStudioFloorPlan>) {
-        const result = await db.update(studioFloorPlans)
-            .set({ ...data, updatedAt: new Date() })
-            .where(eq(studioFloorPlans.id, id))
-            .returning();
-        return result[0];
+        return updateReturning<StudioFloorPlan>(studioFloorPlans, id, { ...data, updatedAt: new Date() });
     },
 
     async deleteFloorPlan(id: string) {
@@ -64,16 +60,11 @@ export const studioService = {
     },
 
     async createFacade(data: NewStudioFacade) {
-        const result = await db.insert(studioFacades).values(data).returning();
-        return result[0];
+        return insertReturning<StudioFacade>(studioFacades, data as any);
     },
 
     async updateFacade(id: string, data: Partial<NewStudioFacade>) {
-        const result = await db.update(studioFacades)
-            .set({ ...data, updatedAt: new Date() })
-            .where(eq(studioFacades.id, id))
-            .returning();
-        return result[0];
+        return updateReturning<StudioFacade>(studioFacades, id, { ...data, updatedAt: new Date() });
     },
 
     async deleteFacade(id: string) {
@@ -112,16 +103,11 @@ export const studioService = {
     },
 
     async createSubmission(data: NewStudioSubmission) {
-        const result = await db.insert(studioSubmissions).values(data).returning();
-        return result[0];
+        return insertReturning<StudioSubmission>(studioSubmissions, data as any);
     },
 
     async updateSubmission(id: string, data: Partial<NewStudioSubmission>) {
-        const result = await db.update(studioSubmissions)
-            .set({ ...data, updatedAt: new Date() })
-            .where(eq(studioSubmissions.id, id))
-            .returning();
-        return result[0];
+        return updateReturning<StudioSubmission>(studioSubmissions, id, { ...data, updatedAt: new Date() });
     },
 
     async deleteSubmission(id: string) {

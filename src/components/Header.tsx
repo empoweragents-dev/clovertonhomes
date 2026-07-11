@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import EnquireModal from './EnquireModal'
 
@@ -9,11 +9,12 @@ export default function Header() {
     const [isEnquireModalOpen, setIsEnquireModalOpen] = useState(false)
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null)
+    const menuButtonRef = useRef<HTMLButtonElement>(null)
 
     // Close mobile menu on resize to desktop
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth >= 1024) {
+            if (window.innerWidth >= 1280) {
                 setIsMobileMenuOpen(false)
                 setMobileSubmenuOpen(null)
             }
@@ -30,6 +31,18 @@ export default function Header() {
             document.body.style.overflow = ''
         }
         return () => { document.body.style.overflow = '' }
+    }, [isMobileMenuOpen])
+
+    useEffect(() => {
+        if (!isMobileMenuOpen) return
+        const closeOnEscape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setIsMobileMenuOpen(false)
+                menuButtonRef.current?.focus()
+            }
+        }
+        document.addEventListener('keydown', closeOnEscape)
+        return () => document.removeEventListener('keydown', closeOnEscape)
     }, [isMobileMenuOpen])
 
     const mobileNavLinks = [
@@ -53,7 +66,7 @@ export default function Header() {
     return (
         <header className="fixed top-0 left-0 w-full z-50 font-heading">
             {/* Main Navigation Bar */}
-            <div className="bg-deep-slate text-white relative z-50 border-b border-white/10">
+            <div className="relative z-50 border-b border-white/10 bg-[#202624]/95 text-white backdrop-blur-xl">
                 <div className="max-w-[1440px] mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-3 select-none cursor-pointer">
@@ -65,7 +78,7 @@ export default function Header() {
                     </Link>
 
                     {/* Navigation Links - Desktop */}
-                    <nav className="hidden lg:flex items-center h-full">
+                    <nav className="hidden xl:flex items-center h-full">
                         <ul className="flex items-center gap-1">
                             {/* Active Mega Menu Trigger */}
                             <li
@@ -73,10 +86,16 @@ export default function Header() {
                                 onMouseEnter={() => setIsMegaMenuOpen(true)}
                                 onMouseLeave={() => setIsMegaMenuOpen(false)}
                             >
-                                <a className="px-5 text-sm font-medium tracking-wide text-white transition-colors flex items-center gap-1 h-full border-b-4 border-primary bg-white/5" href="#">
+                                <button
+                                    type="button"
+                                    className="flex h-full items-center gap-1 border-b-2 border-transparent px-4 text-sm font-medium tracking-wide text-white/80 transition-colors hover:border-white/50 hover:text-white"
+                                    onClick={() => setIsMegaMenuOpen((open) => !open)}
+                                    aria-expanded={isMegaMenuOpen}
+                                    aria-controls="home-designs-menu"
+                                >
                                     Home Designs
-                                    <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${isMegaMenuOpen ? 'rotate-180' : ''}`}>expand_more</span>
-                                </a>
+                                    <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${isMegaMenuOpen ? 'rotate-180' : ''}`} aria-hidden="true">expand_more</span>
+                                </button>
                             </li>
                             <li className="h-20 flex items-center"><Link href="/custom-process" className="px-5 text-sm font-medium tracking-wide text-gray-300 hover:text-white transition-colors opacity-80 hover:opacity-100">Custom Design Build</Link></li>
                             <li className="h-20 flex items-center"><Link href="/properties" className="px-5 text-sm font-medium tracking-wide text-gray-300 hover:text-white transition-colors opacity-80 hover:opacity-100">Home & Land Packages</Link></li>
@@ -88,25 +107,24 @@ export default function Header() {
 
                     {/* Utility Actions */}
                     <div className="flex items-center gap-2 sm:gap-4">
-                        {/* Search (Icon Only for clean look) */}
-                        <button aria-label="Search" className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors">
-                            <span className="material-symbols-outlined">search</span>
-                        </button>
                         {/* Contact Button - Desktop */}
                         <button
                             onClick={() => setIsEnquireModalOpen(true)}
-                            className="hidden sm:flex items-center gap-2 h-10 px-6 rounded-full bg-white hover:bg-gray-100 text-primary text-sm font-bold tracking-wide transition-all shadow-lg shadow-black/5"
+                            className="hidden h-10 items-center gap-2 rounded-xl bg-[#f4f1ea] px-5 text-sm font-bold tracking-wide text-[#234d49] shadow-lg shadow-black/5 transition hover:bg-white sm:flex"
                         >
                             <span>Enquire</span>
-                            <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            <span className="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
                         </button>
                         {/* Hamburger Menu - Mobile */}
                         <button
+                            ref={menuButtonRef}
                             aria-label="Menu"
+                            aria-expanded={isMobileMenuOpen}
+                            aria-controls="mobile-navigation"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 xl:hidden"
                         >
-                            <span className="material-symbols-outlined text-[24px]">
+                            <span className="material-symbols-outlined text-[24px]" aria-hidden="true">
                                 {isMobileMenuOpen ? 'close' : 'menu'}
                             </span>
                         </button>
@@ -116,7 +134,12 @@ export default function Header() {
 
             {/* Mobile Navigation Drawer */}
             <div
-                className={`fixed inset-0 z-40 lg:hidden transition-all duration-300 ${isMobileMenuOpen ? 'visible' : 'invisible'}`}
+                id="mobile-navigation"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Site navigation"
+                aria-hidden={!isMobileMenuOpen}
+                className={`fixed inset-0 z-40 transition-all duration-300 xl:hidden ${isMobileMenuOpen ? 'visible' : 'invisible'}`}
             >
                 {/* Backdrop */}
                 <div
@@ -140,7 +163,7 @@ export default function Header() {
                                                 className="w-full flex items-center justify-between px-6 py-4 text-charcoal hover:bg-gray-50 transition-colors"
                                             >
                                                 <span className="text-base font-bold">{link.name}</span>
-                                                <span className={`material-symbols-outlined text-gray-400 transition-transform duration-200 ${mobileSubmenuOpen === link.name ? 'rotate-180' : ''}`}>
+                                                <span className={`material-symbols-outlined text-gray-400 transition-transform duration-200 ${mobileSubmenuOpen === link.name ? 'rotate-180' : ''}`} aria-hidden="true">
                                                     expand_more
                                                 </span>
                                             </button>
@@ -154,7 +177,7 @@ export default function Header() {
                                                             onClick={() => setIsMobileMenuOpen(false)}
                                                             className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-white hover:text-primary transition-colors"
                                                         >
-                                                            <span className="material-symbols-outlined text-primary/60">{item.icon}</span>
+                                                            <span className="material-symbols-outlined text-primary/60" aria-hidden="true">{item.icon}</span>
                                                             <span className="font-medium">{item.name}</span>
                                                         </Link>
                                                     ))}
@@ -184,33 +207,20 @@ export default function Header() {
                                 className="w-full flex items-center justify-center gap-2 py-4 bg-primary hover:bg-primary/90 text-white rounded-full font-bold text-base transition-all shadow-lg"
                             >
                                 <span>Get a Quote</span>
-                                <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">arrow_forward</span>
                             </button>
-                            <p className="text-center text-xs text-gray-400 mt-3">
-                                Free consultation • No obligation
-                            </p>
                         </div>
 
-                        {/* Contact Info */}
+                        {/* Contact prompt (form-only — no phone/email shown) */}
                         <div className="px-6 py-6 bg-gray-50 border-t border-gray-100">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                    <span className="material-symbols-outlined text-primary text-[20px]">call</span>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500">Call us</p>
-                                    <a href="tel:1300000000" className="text-charcoal font-bold hover:text-primary transition-colors">1300 000 000</a>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                    <span className="material-symbols-outlined text-primary text-[20px]">mail</span>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500">Email us</p>
-                                    <a href="mailto:info@cloverton.com.au" className="text-charcoal font-bold hover:text-primary transition-colors">info@cloverton.com.au</a>
-                                </div>
-                            </div>
+                            <Link
+                                href="/contact"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="flex items-center justify-center gap-2 py-3 w-full rounded-full border border-primary text-primary font-bold text-sm hover:bg-primary hover:text-white transition-all"
+                            >
+                                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">mail</span>
+                                Contact Us
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -218,7 +228,8 @@ export default function Header() {
 
             {/* Mega Menu Container - Desktop */}
             <div
-                className={`absolute top-full left-0 w-full bg-white text-charcoal shadow-2xl border-t border-gray-100 z-40 transition-all duration-300 ease-in-out hidden lg:block ${isMegaMenuOpen ? 'opacity-100 translate-y-0 visible' : 'opacity-0 -translate-y-2 invisible'
+                id="home-designs-menu"
+                className={`absolute top-full left-0 z-40 hidden w-full border-t border-gray-100 bg-white text-charcoal shadow-2xl transition-all duration-300 ease-in-out xl:block ${isMegaMenuOpen ? 'opacity-100 translate-y-0 visible' : 'opacity-0 -translate-y-2 invisible'
                     }`}
                 onMouseEnter={() => setIsMegaMenuOpen(true)}
                 onMouseLeave={() => setIsMegaMenuOpen(false)}
@@ -229,7 +240,7 @@ export default function Header() {
                         <div className="col-span-12 md:col-span-3 lg:col-span-3">
                             <h2 className="text-2xl font-bold text-charcoal font-heading mb-4">Home designs</h2>
                             <p className="text-gray-500 text-sm leading-relaxed mb-6">
-                                Do you have vacant land or considering a knockdown rebuild? Search our four series of home designs.
+                                Explore home designs by layout, storeys, room count, and the way you want the spaces to work together.
                             </p>
                             <Link
                                 href="/designs"

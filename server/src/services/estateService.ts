@@ -2,6 +2,7 @@ import { db } from "../config/database";
 import { estates, Estate, NewEstate, regions } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import slugify from "slugify";
+import { insertReturning, updateReturning } from "../db/helpers";
 
 export const estateService = {
     // Get all estates with region
@@ -30,8 +31,7 @@ export const estateService = {
     // Create estate
     async create(data: Omit<NewEstate, "id" | "slug" | "createdAt">): Promise<Estate> {
         const slug = slugify(data.name, { lower: true, strict: true });
-        const result = await db.insert(estates).values({ ...data, slug }).returning();
-        return result[0];
+        return insertReturning<Estate>(estates, { ...data, slug });
     },
 
     // Update estate
@@ -39,13 +39,12 @@ export const estateService = {
         if (data.name) {
             data.slug = slugify(data.name, { lower: true, strict: true });
         }
-        const result = await db.update(estates).set(data).where(eq(estates.id, id)).returning();
-        return result[0];
+        return updateReturning<Estate>(estates, id, data);
     },
 
     // Delete estate (soft delete)
     async delete(id: string): Promise<boolean> {
-        const result = await db.update(estates).set({ isActive: false }).where(eq(estates.id, id)).returning();
-        return result.length > 0;
+        const result: any = await db.update(estates).set({ isActive: false }).where(eq(estates.id, id));
+        return result[0].affectedRows > 0;
     },
 };

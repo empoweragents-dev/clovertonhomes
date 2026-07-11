@@ -3,8 +3,9 @@ import {
     properties, propertyImages, Property, NewProperty, PropertyImage, NewPropertyImage,
     homeDesigns, estates, regions, consultants
 } from "../db/schema";
-import { eq, and, desc, ilike, gte, lte, or } from "drizzle-orm";
+import { eq, and, desc, like, gte, lte, or } from "drizzle-orm";
 import slugify from "slugify";
+import { insertReturning, updateReturning } from "../db/helpers";
 
 export interface PropertyFilters {
     regionId?: string;
@@ -56,8 +57,8 @@ export const propertyService = {
         if (filters.search) {
             conditions.push(
                 or(
-                    ilike(properties.title, `%${filters.search}%`),
-                    ilike(properties.address, `%${filters.search}%`)
+                    like(properties.title, `%${filters.search}%`),
+                    like(properties.address, `%${filters.search}%`)
                 )!
             );
         }
@@ -129,10 +130,7 @@ export const propertyService = {
         const slug = slugify(data.title, { lower: true, strict: true });
         // Auto-calculate total price
         const totalPrice = (data.housePrice || 0) + (data.landPrice || 0);
-        const result = await db.insert(properties)
-            .values({ ...data, slug, totalPrice: totalPrice || data.totalPrice })
-            .returning();
-        return result[0];
+        return insertReturning<Property>(properties, { ...data, slug, totalPrice: totalPrice || data.totalPrice });
     },
 
     // Update property
@@ -149,28 +147,23 @@ export const propertyService = {
                 data.totalPrice = housePrice + landPrice;
             }
         }
-        const result = await db.update(properties)
-            .set({ ...data, updatedAt: new Date() })
-            .where(eq(properties.id, id))
-            .returning();
-        return result[0];
+        return updateReturning<Property>(properties, id, { ...data, updatedAt: new Date() });
     },
 
     // Add image to property
     async addImage(propertyId: string, imageData: Omit<NewPropertyImage, "id" | "propertyId">): Promise<PropertyImage> {
-        const result = await db.insert(propertyImages).values({ ...imageData, propertyId }).returning();
-        return result[0];
+        return insertReturning<PropertyImage>(propertyImages, { ...imageData, propertyId });
     },
 
     // Delete image
     async deleteImage(imageId: string): Promise<boolean> {
-        const result = await db.delete(propertyImages).where(eq(propertyImages.id, imageId));
-        return result.length > 0;
+        const result: any = await db.delete(propertyImages).where(eq(propertyImages.id, imageId));
+        return result[0].affectedRows > 0;
     },
 
     // Delete property (soft delete)
     async delete(id: string): Promise<boolean> {
-        const result = await db.update(properties).set({ isActive: false }).where(eq(properties.id, id));
-        return result.length > 0;
+        const result: any = await db.update(properties).set({ isActive: false }).where(eq(properties.id, id));
+        return result[0].affectedRows > 0;
     },
 };

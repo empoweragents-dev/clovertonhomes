@@ -21,8 +21,17 @@ export const env = {
     // Frontend
     FRONTEND_URL: process.env.FRONTEND_URL || "http://localhost:3000",
 
-    // Brevo Email Service
+    // Brevo Email Service (legacy API key, kept for compatibility)
     BREVO_API_KEY: process.env.BREVO_API_KEY || "",
+
+    // SMTP (free relay, e.g. Brevo smtp-relay.brevo.com:587)
+    SMTP_HOST: process.env.SMTP_HOST || "smtp-relay.brevo.com",
+    SMTP_PORT: parseInt(process.env.SMTP_PORT || "587"),
+    SMTP_USER: process.env.SMTP_USER || "",
+    SMTP_PASS: process.env.SMTP_PASS || "",
+    // Where enquiry notifications are delivered, and the From address used.
+    MAIL_TO: process.env.MAIL_TO || "info@clovertonhomes.com.au",
+    MAIL_FROM: process.env.MAIL_FROM || "info@clovertonhomes.com.au",
 };
 
 // Validate required environment variables

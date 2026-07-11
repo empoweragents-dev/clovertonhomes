@@ -1,6 +1,7 @@
 import { db } from '../config/database';
-import { interiorSchemes, galleryImages, NewInteriorScheme, NewGalleryImage } from '../db/schema';
-import { eq, desc, asc, and, ilike } from 'drizzle-orm';
+import { interiorSchemes, galleryImages, InteriorScheme, NewInteriorScheme, GalleryImage, NewGalleryImage } from '../db/schema';
+import { eq, desc, asc, and } from 'drizzle-orm';
+import { insertReturning, updateReturning } from '../db/helpers';
 
 export const galleryService = {
     // Interior Schemes
@@ -22,16 +23,11 @@ export const galleryService = {
     },
 
     async createScheme(data: NewInteriorScheme) {
-        const result = await db.insert(interiorSchemes).values(data).returning();
-        return result[0];
+        return insertReturning<InteriorScheme>(interiorSchemes, data as any);
     },
 
     async updateScheme(id: string, data: Partial<NewInteriorScheme>) {
-        const result = await db.update(interiorSchemes)
-            .set({ ...data, updatedAt: new Date() })
-            .where(eq(interiorSchemes.id, id))
-            .returning();
-        return result[0];
+        return updateReturning<InteriorScheme>(interiorSchemes, id, { ...data, updatedAt: new Date() });
     },
 
     async deleteScheme(id: string) {
@@ -69,16 +65,11 @@ export const galleryService = {
     },
 
     async createImage(data: NewGalleryImage) {
-        const result = await db.insert(galleryImages).values(data).returning();
-        return result[0];
+        return insertReturning<GalleryImage>(galleryImages, data as any);
     },
 
     async updateImage(id: string, data: Partial<NewGalleryImage>) {
-        const result = await db.update(galleryImages)
-            .set({ ...data, updatedAt: new Date() })
-            .where(eq(galleryImages.id, id))
-            .returning();
-        return result[0];
+        return updateReturning<GalleryImage>(galleryImages, id, { ...data, updatedAt: new Date() });
     },
 
     async deleteImage(id: string) {

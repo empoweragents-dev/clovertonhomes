@@ -3,9 +3,8 @@ import HeroSection from '@/components/HeroSection'
 import BuildPathways from '@/components/BuildPathways'
 import ExperienceGrid from '@/components/ExperienceGrid'
 import DesignCarousel from '@/components/DesignCarousel'
-import Testimonial from '@/components/Testimonial'
+import HomeEditorialSections from '@/components/HomeEditorialSections'
 import ContactForm from '@/components/ContactForm'
-import FloatingChat from '@/components/FloatingChat'
 
 export default function Home() {
     return (
@@ -14,9 +13,8 @@ export default function Home() {
             <BuildPathways />
             <ExperienceGrid />
             <DesignCarousel />
-            <Testimonial />
+            <HomeEditorialSections />
             <ContactForm />
-            <FloatingChat />
         </div>
     )
 }

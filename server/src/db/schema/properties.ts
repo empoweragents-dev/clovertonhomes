@@ -1,45 +1,45 @@
-import { pgTable, uuid, varchar, text, boolean, timestamp, integer, decimal, date, pgEnum } from "drizzle-orm/pg-core";
+import { mysqlTable, varchar, text, boolean, timestamp, int, decimal, date, mysqlEnum } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
+import { randomUUID } from "crypto";
 import { homeDesigns } from "./designs";
 import { regions } from "./regions";
 import { estates } from "./estates";
-import { consultants } from "./consultants";
 
-// Enums
-export const propertyBadgeEnum = pgEnum("property_badge", ["new", "fixed", "sold", "under_offer"]);
+// Enum value set
+export const propertyBadgeValues = ["new", "fixed", "sold", "under_offer"] as const;
 
 // Properties table (House & Land Packages)
-export const properties = pgTable("properties", {
-    id: uuid("id").primaryKey().defaultRandom(),
+export const properties = mysqlTable("properties", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
     title: varchar("title", { length: 200 }).notNull(),
     slug: varchar("slug", { length: 200 }).notNull().unique(),
-    designId: uuid("design_id").references(() => homeDesigns.id),
-    estateId: uuid("estate_id").references(() => estates.id),
-    regionId: uuid("region_id").references(() => regions.id).notNull(),
+    designId: varchar("design_id", { length: 36 }).references(() => homeDesigns.id),
+    estateId: varchar("estate_id", { length: 36 }).references(() => estates.id),
+    regionId: varchar("region_id", { length: 36 }).references(() => regions.id).notNull(),
     // consultantId removed
     description: text("description"),
     address: text("address"),
     lotNumber: varchar("lot_number", { length: 20 }),
 
     // Pricing
-    housePrice: integer("house_price"), // in cents
-    landPrice: integer("land_price"), // in cents
-    totalPrice: integer("total_price"), // in cents
+    housePrice: int("house_price"), // in cents
+    landPrice: int("land_price"), // in cents
+    totalPrice: int("total_price"), // in cents
 
     // Specs
-    bedrooms: integer("bedrooms").notNull(),
-    bathrooms: integer("bathrooms").notNull(),
-    garages: integer("garages").notNull(),
-    squareMeters: integer("square_meters"),
+    bedrooms: int("bedrooms").notNull(),
+    bathrooms: int("bathrooms").notNull(),
+    garages: int("garages").notNull(),
+    squareMeters: int("square_meters"),
 
     // Land details
     landWidth: decimal("land_width", { precision: 5, scale: 2 }),
     landDepth: decimal("land_depth", { precision: 5, scale: 2 }),
-    landArea: integer("land_area"), // sq meters
+    landArea: int("land_area"), // sq meters
 
     // Display
     featuredImage: text("featured_image"),
-    badge: propertyBadgeEnum("badge"),
+    badge: mysqlEnum("badge", propertyBadgeValues),
 
     // Status
     titlesExpected: date("titles_expected"),
@@ -55,12 +55,12 @@ export const properties = pgTable("properties", {
 });
 
 // Property Images table
-export const propertyImages = pgTable("property_images", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    propertyId: uuid("property_id").references(() => properties.id, { onDelete: "cascade" }).notNull(),
+export const propertyImages = mysqlTable("property_images", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
+    propertyId: varchar("property_id", { length: 36 }).references(() => properties.id, { onDelete: "cascade" }).notNull(),
     imageUrl: text("image_url").notNull(),
     altText: varchar("alt_text", { length: 255 }),
-    sortOrder: integer("sort_order").default(0),
+    sortOrder: int("sort_order").default(0),
 });
 
 // Relations

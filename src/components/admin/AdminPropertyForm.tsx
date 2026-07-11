@@ -106,6 +106,7 @@ export default function AdminPropertyForm({ initialData, isEditing = false, id }
             const res = await fetch(url, {
                 method: isEditing ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify(payload)
             })
 

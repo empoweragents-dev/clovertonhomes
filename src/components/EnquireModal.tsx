@@ -5,6 +5,9 @@ import { useState, useEffect } from 'react'
 export default function EnquireModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const [step, setStep] = useState(1)
     const [isVisible, setIsVisible] = useState(false)
+    const [submitting, setSubmitting] = useState(false)
+    const [submitted, setSubmitted] = useState(false)
+    const [submitError, setSubmitError] = useState('')
     const [formData, setFormData] = useState({
         homeType: '',
         designType: 'existing', // 'existing' or 'custom'
@@ -13,14 +16,25 @@ export default function EnquireModal({ isOpen, onClose }: { isOpen: boolean; onC
         email: ''
     })
 
+    const resetForm = () => {
+        setStep(1)
+        setSubmitted(false)
+        setSubmitError('')
+        setFormData({ homeType: '', designType: 'existing', name: '', phone: '', email: '' })
+    }
+
     // Handle animation
     useEffect(() => {
         if (isOpen) {
             setIsVisible(true)
         } else {
-            const timer = setTimeout(() => setIsVisible(false), 300)
+            const timer = setTimeout(() => {
+                setIsVisible(false)
+                resetForm()
+            }, 300)
             return () => clearTimeout(timer)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])
 
     if (!isVisible && !isOpen) return null
@@ -33,23 +47,40 @@ export default function EnquireModal({ isOpen, onClose }: { isOpen: boolean; onC
         if (step > 1) setStep(step - 1)
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        // Here you would typically send data to an API
-        console.log('Form submitted:', formData)
+        setSubmitError('')
+        setSubmitting(true)
 
-        // Simulating success/closing
-        setTimeout(() => {
-            onClose()
-            setStep(1) // Reset for next time
-            setFormData({
-                homeType: '',
-                designType: 'existing', // default
-                name: '',
-                phone: '',
-                email: ''
+        const [firstName, ...rest] = formData.name.trim().split(' ')
+        const lastName = rest.join(' ')
+
+        try {
+            const res = await fetch('/api/enquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: formData.designType === 'custom' ? 'custom_build' : 'general',
+                    firstName: firstName || formData.name,
+                    lastName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    homeType: formData.homeType,
+                    designPreference: formData.designType,
+                    message: `Home type: ${formData.homeType}; Design: ${formData.designType}`,
+                    source: 'enquire-modal',
+                }),
             })
-        }, 1000)
+            const data = await res.json()
+            if (!res.ok || !data.success) {
+                throw new Error(data.message || 'Something went wrong. Please try again.')
+            }
+            setSubmitted(true)
+        } catch (err: any) {
+            setSubmitError(err.message || 'Something went wrong. Please try again.')
+        } finally {
+            setSubmitting(false)
+        }
     }
 
     const isStep1Valid = formData.homeType !== ''
@@ -72,7 +103,7 @@ export default function EnquireModal({ isOpen, onClose }: { isOpen: boolean; onC
                             Start Your Journey
                         </h3>
                         <p className="text-sm text-gray-500 mt-1">
-                            Step {step} of 2
+                            {submitted ? 'All done' : `Step ${step} of 2`}
                         </p>
                     </div>
                     <button
@@ -83,6 +114,25 @@ export default function EnquireModal({ isOpen, onClose }: { isOpen: boolean; onC
                     </button>
                 </div>
 
+                {submitted ? (
+                    <div className="text-center py-8">
+                        <div className="w-16 h-16 rounded-full bg-brand-teal/10 text-brand-teal flex items-center justify-center mx-auto mb-5">
+                            <span className="material-symbols-outlined text-3xl">check_circle</span>
+                        </div>
+                        <h4 className="text-xl font-bold text-gray-900 mb-2">Enquiry received!</h4>
+                        <p className="text-sm text-gray-500 mb-8 max-w-xs mx-auto">
+                            Thanks {formData.name.split(' ')[0] || 'there'} — one of our consultants will be in touch with you shortly.
+                        </p>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="w-full rounded-full bg-brand-teal px-4 py-3 text-sm font-bold text-white shadow-lg shadow-brand-teal/20 hover:bg-opacity-90 transition-all"
+                        >
+                            Close
+                        </button>
+                    </div>
+                ) : (
+                <>
                 {/* Progress Bar */}
                 <div className="w-full h-1 bg-gray-100 rounded-full mb-8 overflow-hidden">
                     <div
@@ -215,14 +265,19 @@ export default function EnquireModal({ isOpen, onClose }: { isOpen: boolean; onC
                         ) : (
                             <button
                                 type="submit"
-                                disabled={!isStep2Valid}
+                                disabled={!isStep2Valid || submitting}
                                 className="flex-[2] rounded-full bg-brand-teal px-4 py-3 text-sm font-bold text-white shadow-lg shadow-brand-teal/20 hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                             >
-                                Submit Enquiry
+                                {submitting ? 'Sending…' : 'Submit Enquiry'}
                             </button>
                         )}
                     </div>
+                    {submitError && (
+                        <p className="mt-4 text-sm text-red-600 font-medium text-center" role="alert">{submitError}</p>
+                    )}
                 </form>
+                </>
+                )}
             </div>
         </div>
     )

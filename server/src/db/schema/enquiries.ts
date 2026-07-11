@@ -1,22 +1,23 @@
-import { pgTable, uuid, varchar, text, boolean, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { mysqlTable, varchar, text, timestamp, mysqlEnum } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
+import { randomUUID } from "crypto";
 import { properties } from "./properties";
 import { homeDesigns } from "./designs";
 import { consultants } from "./consultants";
 
-// Enums
-export const enquiryTypeEnum = pgEnum("enquiry_type", ["general", "property", "design", "custom_build"]);
-export const enquiryStatusEnum = pgEnum("enquiry_status", ["new", "contacted", "qualified", "closed"]);
+// Enum value sets
+export const enquiryTypeValues = ["general", "property", "design", "custom_build"] as const;
+export const enquiryStatusValues = ["new", "contacted", "qualified", "closed"] as const;
 
 // Enquiries table
-export const enquiries = pgTable("enquiries", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    type: enquiryTypeEnum("type").default("general").notNull(),
+export const enquiries = mysqlTable("enquiries", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
+    type: mysqlEnum("type", enquiryTypeValues).default("general").notNull(),
 
     // Related entities (optional)
-    propertyId: uuid("property_id").references(() => properties.id),
-    designId: uuid("design_id").references(() => homeDesigns.id),
-    consultantId: uuid("consultant_id").references(() => consultants.id),
+    propertyId: varchar("property_id", { length: 36 }).references(() => properties.id),
+    designId: varchar("design_id", { length: 36 }).references(() => homeDesigns.id),
+    consultantId: varchar("consultant_id", { length: 36 }).references(() => consultants.id),
 
     // Contact details
     firstName: varchar("first_name", { length: 100 }).notNull(),
@@ -33,8 +34,8 @@ export const enquiries = pgTable("enquiries", {
     source: varchar("source", { length: 50 }), // Which page/form
 
     // Status tracking
-    status: enquiryStatusEnum("status").default("new").notNull(),
-    assignedTo: uuid("assigned_to"), // FK to users table
+    status: mysqlEnum("status", enquiryStatusValues).default("new").notNull(),
+    assignedTo: varchar("assigned_to", { length: 36 }), // FK to users table
     notes: text("notes"), // Internal notes
 
     createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -1,4 +1,6 @@
+'use client'
 
+import { useState } from "react"
 import { InclusionItem } from "@/data/inclusions"
 import Image from "next/image"
 
@@ -6,25 +8,33 @@ interface VisualBlockProps {
     item: InclusionItem | null
 }
 
+const FALLBACK = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
+
 export default function VisualBlock({ item }: VisualBlockProps) {
+    const [src, setSrc] = useState(item?.imageUrl || item?.image || FALLBACK)
+
     if (!item) return null
 
     return (
         <div className="group bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 dark:border-gray-800 flex flex-col h-full">
             {/* Header Image */}
-            <div className="relative aspect-video overflow-hidden">
+            <div className="relative aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800">
                 <Image
-                    src={item.imageUrl || item.image || ''}
+                    src={src}
                     alt={item.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    onError={() => { if (src !== FALLBACK) setSrc(FALLBACK) }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div className="absolute bottom-4 left-4">
-                    <span className="bg-deep-slate text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm backdrop-blur-md bg-opacity-90">
-                        {item.badge}
-                    </span>
-                </div>
+                {item.badge && (
+                    <div className="absolute bottom-4 left-4">
+                        <span className="bg-deep-slate text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm backdrop-blur-md bg-opacity-90">
+                            {item.badge}
+                        </span>
+                    </div>
+                )}
             </div>
 
             {/* Content Body */}

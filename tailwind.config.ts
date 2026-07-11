@@ -19,8 +19,8 @@ const config: Config = {
         'background-dark': '#171a1b',
       },
       fontFamily: {
-        'display': ['Inter', 'sans-serif'],
-        'heading': ['Outfit', 'sans-serif'],
+        'display': ['Inter', 'Segoe UI', 'Arial', 'sans-serif'],
+        'heading': ['Outfit', 'Inter', 'Segoe UI', 'Arial', 'sans-serif'],
       },
       borderRadius: {
         'DEFAULT': '0.5rem',

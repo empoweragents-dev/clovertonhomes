@@ -1,8 +1,9 @@
-import { pgTable, uuid, varchar, text, timestamp } from "drizzle-orm/pg-core";
+import { mysqlTable, varchar, text, timestamp } from "drizzle-orm/mysql-core";
+import { randomUUID } from "crypto";
 
 // Site Settings table (for CMS content)
-export const siteSettings = pgTable("site_settings", {
-    id: uuid("id").primaryKey().defaultRandom(),
+export const siteSettings = mysqlTable("site_settings", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
     key: varchar("key", { length: 100 }).notNull().unique(),
     value: text("value"),
     type: varchar("type", { length: 20 }).default("text"), // text, json, html

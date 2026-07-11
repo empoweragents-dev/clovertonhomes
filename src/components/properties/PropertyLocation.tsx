@@ -1,7 +1,8 @@
-export default function PropertyLocation() {
+export default function PropertyLocation({ address }: { address?: string }) {
     return (
         <div className="space-y-4">
             <h3 className="text-2xl font-bold text-brand-teal font-heading">Location</h3>
+            {address && <p className="text-gray-500 flex items-center gap-2 -mt-2"><span className="material-symbols-outlined text-lg">location_on</span>{address}</p>}
             <div className="w-full aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden relative">
                 <div
                     className="w-full h-full bg-cover bg-center"

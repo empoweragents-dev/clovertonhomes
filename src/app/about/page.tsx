@@ -1,92 +1,137 @@
-'use client'
-
 import Image from 'next/image'
+import Link from 'next/link'
+
+const principles = [
+    {
+        number: '01',
+        title: 'Clarity before complexity',
+        text: 'Home building comes with many decisions. We organise the options so visitors can understand what matters now and what can wait.',
+    },
+    {
+        number: '02',
+        title: 'Designed for daily life',
+        text: 'Good design starts with routines: how people gather, move through the home, find privacy, store things, and connect with outdoor spaces.',
+    },
+    {
+        number: '03',
+        title: 'Choices with purpose',
+        text: 'Layouts, facades, finishes, and inclusions should support a clear direction rather than add unnecessary noise to the process.',
+    },
+]
+
+const pathways = [
+    { title: 'Home designs', text: 'Compare layouts, room counts, storeys, and different ways of organising a home.', href: '/designs' },
+    { title: 'House and land', text: 'Explore a home and location together through available property opportunities.', href: '/properties' },
+    { title: 'Custom building', text: 'Begin with your block, priorities, and ideas when a more tailored direction is needed.', href: '/custom-process' },
+    { title: 'Interiors and inclusions', text: 'Bring materials, colours, fixtures, and practical details into the same conversation.', href: '/interiors' },
+]
 
 export default function AboutPage() {
     return (
-        <div className="flex flex-col">
-            {/* Hero Section */}
-            <section className="relative py-24 px-6 bg-background-light overflow-hidden">
-                <div className="max-w-[1440px] mx-auto text-center relative z-10">
-                    <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block animate-fade-in">About Us</span>
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-heading text-deep-slate mb-6 animate-slide-up">
-                        Building Dreams,<br />Crafting Legacies.
-                    </h1>
-                    <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed animate-fade-in-delayed">
-                        For over two decades, Cloverton Homes has been defining the standard for luxury residential construction, turning visions into enduring realities.
+        <div className="bg-[#fcfbf8]">
+            <section className="bg-[#f4f1ea] py-20 sm:py-28">
+                <div className="home-container grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+                    <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#234d49]">About Cloverton Homes</p>
+                        <h1 className="mt-5 max-w-4xl font-heading text-5xl font-semibold leading-[0.92] tracking-[-0.06em] text-[#202624] sm:text-7xl lg:text-8xl">
+                            A clearer way to shape your home.
+                        </h1>
+                    </div>
+                    <p className="max-w-2xl text-base leading-8 text-[#626a66] sm:text-xl lg:justify-self-end">
+                        Cloverton Homes brings designs, locations, building pathways, and interior choices together so you can explore what suits your life before deciding what comes next.
                     </p>
                 </div>
-                {/* Decorative Elements */}
-                <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-                    <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-brand-teal blur-3xl"></div>
-                    <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-primary blur-3xl"></div>
-                </div>
             </section>
 
-            {/* Our Story Section */}
-            <section className="py-20 px-6 bg-white">
-                <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    <div className="relative h-[600px] rounded-2xl overflow-hidden shadow-2xl group">
-                        <div
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2700&auto=format&fit=crop')" }}
-                        ></div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            <section className="py-20 sm:py-28">
+                <div className="home-container grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+                    <div className="relative min-h-[420px] overflow-hidden rounded-[2rem] bg-[#d8d0c3] sm:min-h-[620px]">
+                        <Image
+                            src="https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=1500&q=85"
+                            alt="Contemporary interior with warm timber and natural light"
+                            fill
+                            priority
+                            sizes="(min-width: 1024px) 55vw, 100vw"
+                            className="object-cover"
+                        />
                     </div>
-                    <div>
-                        <h2 className="text-3xl md:text-4xl font-bold font-heading text-deep-slate mb-6">Our Story</h2>
-                        <div className="space-y-6 text-gray-600 leading-relaxed text-lg">
+
+                    <div className="lg:pl-8">
+                        <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#234d49]">What we are here to do</p>
+                        <h2 className="mt-5 font-heading text-4xl font-semibold leading-none tracking-[-0.055em] text-[#202624] sm:text-6xl">
+                            Make the early decisions feel more manageable.
+                        </h2>
+                        <div className="mt-7 space-y-5 text-base leading-8 text-[#626a66]">
                             <p>
-                                Founded on the principles of integrity and innovation, Cloverton Homes started as a boutique builder with a simple mission: to build homes that we would be proud to live in ourselves.
+                                Choosing a home is rarely one decision. It is a series of connected questions about land, layout, room sizes, lifestyle, budget, finishes, and the details that make a space feel personal.
                             </p>
                             <p>
-                                What began as a small team of dedicated craftsmen has grown into a premier residential construction firm, renowned for our attention to detail and personalized approach. We believe that a home is more than just bricks and mortar; it's the backdrop for life's most cherished memories.
+                                Our role is to give those questions a useful structure. You can compare established home designs, explore house and land opportunities, understand a custom path, and develop an interior direction without being pushed toward a single answer too early.
                             </p>
                             <p>
-                                Today, we continue to push the boundaries of design and sustainability, ensuring that every Cloverton Home is not only beautiful but built for the future.
+                                The aim is simple: help you arrive at the next conversation with a clearer sense of what you need and what you want to explore further.
                             </p>
                         </div>
-
-                        {/* Stats Grid */}
-                        <div className="grid grid-cols-3 gap-8 mt-12 pt-12 border-t border-gray-100">
-                            <div>
-                                <span className="block text-4xl font-bold text-brand-teal mb-1">20+</span>
-                                <span className="text-sm text-gray-500 font-medium uppercase tracking-wide">Years Experience</span>
-                            </div>
-                            <div>
-                                <span className="block text-4xl font-bold text-brand-teal mb-1">500+</span>
-                                <span className="text-sm text-gray-500 font-medium uppercase tracking-wide">Homes Built</span>
-                            </div>
-                            <div>
-                                <span className="block text-4xl font-bold text-brand-teal mb-1">50+</span>
-                                <span className="text-sm text-gray-500 font-medium uppercase tracking-wide">Design Awards</span>
-                            </div>
+                        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                            <Link href="/designs" className="focus-ring inline-flex min-h-12 items-center justify-center rounded-2xl bg-[#234d49] px-6 text-sm font-bold text-white transition hover:bg-[#1d3f3c]">
+                                Explore home designs
+                            </Link>
+                            <Link href="/contact" className="focus-ring inline-flex min-h-12 items-center justify-center rounded-2xl border border-[#cfc9bd] px-6 text-sm font-bold text-[#234d49] transition hover:bg-[#e8eee9]">
+                                Ask a question
+                            </Link>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Values Section */}
-            <section className="py-24 px-6 bg-deep-slate text-white">
-                <div className="max-w-[1280px] mx-auto">
-                    <div className="text-center mb-16">
-                        <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Why Choose Us</span>
-                        <h2 className="text-3xl md:text-5xl font-bold font-heading">Our Core Values</h2>
+            <section className="bg-[#202624] py-20 text-white sm:py-28">
+                <div className="home-container">
+                    <div className="max-w-3xl">
+                        <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#aebfb7]">What guides the experience</p>
+                        <h2 className="mt-5 font-heading text-4xl font-semibold leading-none tracking-[-0.055em] sm:text-6xl">
+                            Less noise. More useful direction.
+                        </h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                            { title: 'Quality First', desc: 'We never compromise on materials or craftsmanship. Excellence is our baseline.', icon: 'diamond' },
-                            { title: 'Transparent Process', desc: 'Clear communication at every stage. No hidden costs, no surprises.', icon: 'visibility' },
-                            { title: 'Sustainable Design', desc: 'Building energy-efficient homes that are kind to the planet and your wallet.', icon: 'eco' }
-                        ].map((value, i) => (
-                            <div key={i} className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                                <div className="w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center mb-6">
-                                    <span className="material-symbols-outlined">{value.icon}</span>
+                    <div className="mt-12 grid gap-px overflow-hidden rounded-[2rem] border border-white/10 bg-white/10 lg:grid-cols-3">
+                        {principles.map((principle) => (
+                            <article key={principle.number} className="bg-[#202624] p-7 sm:p-9">
+                                <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#aebfb7]">{principle.number}</span>
+                                <h3 className="mt-12 font-heading text-2xl font-semibold tracking-[-0.04em]">{principle.title}</h3>
+                                <p className="mt-4 text-sm leading-7 text-white/65">{principle.text}</p>
+                            </article>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="bg-[#f4f1ea] py-20 sm:py-28">
+                <div className="home-container">
+                    <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#234d49]">Ways to begin</p>
+                            <h2 className="mt-5 font-heading text-4xl font-semibold leading-none tracking-[-0.055em] text-[#202624] sm:text-6xl">
+                                Start with the part you know.
+                            </h2>
+                        </div>
+                        <p className="max-w-xl text-base leading-8 text-[#626a66] sm:text-lg lg:justify-self-end">
+                            You do not need every answer before you start exploring. Choose the pathway closest to your current situation.
+                        </p>
+                    </div>
+
+                    <div className="mt-12 grid gap-4 sm:grid-cols-2">
+                        {pathways.map((pathway) => (
+                            <Link key={pathway.title} href={pathway.href} className="focus-ring group rounded-[1.75rem] border border-[#ded9ce] bg-[#fcfbf8] p-6 transition hover:-translate-y-1 hover:border-[#234d49]/30 hover:shadow-xl hover:shadow-black/5 sm:p-8">
+                                <div className="flex items-start justify-between gap-5">
+                                    <div>
+                                        <h3 className="font-heading text-2xl font-semibold tracking-[-0.04em] text-[#202624]">{pathway.title}</h3>
+                                        <p className="mt-3 max-w-xl text-sm leading-7 text-[#626a66]">{pathway.text}</p>
+                                    </div>
+                                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#ded9ce] text-[#234d49] transition group-hover:bg-[#234d49] group-hover:text-white">
+                                        <span className="material-symbols-outlined text-[19px]" aria-hidden="true">arrow_outward</span>
+                                    </span>
                                 </div>
-                                <h3 className="text-xl font-bold font-heading mb-4">{value.title}</h3>
-                                <p className="text-gray-400 leading-relaxed">{value.desc}</p>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>

@@ -1,14 +1,15 @@
-import { pgTable, uuid, timestamp } from "drizzle-orm/pg-core";
+import { mysqlTable, varchar, timestamp } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
+import { randomUUID } from "crypto";
 import { properties } from "./properties";
 import { homeDesigns } from "./designs";
 
 // User Favorites table
-export const favorites = pgTable("favorites", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id").notNull(), // References Better Auth user
-    propertyId: uuid("property_id").references(() => properties.id, { onDelete: "cascade" }),
-    designId: uuid("design_id").references(() => homeDesigns.id, { onDelete: "cascade" }),
+export const favorites = mysqlTable("favorites", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
+    userId: varchar("user_id", { length: 36 }).notNull(), // References Better Auth user
+    propertyId: varchar("property_id", { length: 36 }).references(() => properties.id, { onDelete: "cascade" }),
+    designId: varchar("design_id", { length: 36 }).references(() => homeDesigns.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

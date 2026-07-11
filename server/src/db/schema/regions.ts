@@ -1,8 +1,9 @@
-import { pgTable, uuid, varchar, text, boolean, timestamp } from "drizzle-orm/pg-core";
+import { mysqlTable, varchar, boolean, timestamp } from "drizzle-orm/mysql-core";
+import { randomUUID } from "crypto";
 
 // Regions table
-export const regions = pgTable("regions", {
-    id: uuid("id").primaryKey().defaultRandom(),
+export const regions = mysqlTable("regions", {
+    id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => randomUUID()),
     name: varchar("name", { length: 100 }).notNull(),
     slug: varchar("slug", { length: 100 }).notNull().unique(),
     state: varchar("state", { length: 50 }).notNull(),

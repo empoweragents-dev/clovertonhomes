@@ -1,17 +1,21 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
 import { env } from "./env";
 import * as schema from "../db/schema";
 
-// Create postgres connection
-const client = postgres(env.DATABASE_URL, {
-    max: 10, // Max connections in pool
-    idle_timeout: 20,
-    connect_timeout: 10,
-    prepare: false, // Required for Supabase connection pooler
+// Create MySQL connection pool. Hostinger closes idle connections, so enable
+// keepalive and bound idle sockets to avoid ECONNRESET on reused connections.
+const pool = mysql.createPool({
+    uri: env.DATABASE_URL,
+    connectionLimit: 10,
+    connectTimeout: 15000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000,
+    idleTimeout: 60000,
+    maxIdle: 4,
 });
 
 // Create drizzle instance with schema
-export const db = drizzle(client, { schema });
+export const db = drizzle(pool, { schema, mode: "default" });
 
 export type Database = typeof db;

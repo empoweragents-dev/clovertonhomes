@@ -2,6 +2,7 @@ import { db } from "../config/database";
 import { enquiries, Enquiry, NewEnquiry, properties, homeDesigns, consultants } from "../db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { emailService } from "./emailService";
+import { insertReturning, updateReturning } from "../db/helpers";
 
 export interface EnquiryFilters {
     type?: string;
@@ -76,8 +77,7 @@ export const enquiryService = {
 
     // Create enquiry (public)
     async create(data: Omit<NewEnquiry, "id" | "createdAt" | "updatedAt">): Promise<Enquiry> {
-        const result = await db.insert(enquiries).values({ ...data, status: "new" }).returning();
-        const enquiry = result[0];
+        const enquiry = await insertReturning<Enquiry>(enquiries, { ...data, status: "new" });
 
         // Send email notifications (async, don't wait)
         this.sendEnquiryEmails(enquiry).catch(err => {
@@ -122,26 +122,18 @@ export const enquiryService = {
 
     // Update enquiry status (admin)
     async updateStatus(id: string, status: string, notes?: string): Promise<Enquiry | undefined> {
-        const result = await db.update(enquiries)
-            .set({ status: status as any, notes, updatedAt: new Date() })
-            .where(eq(enquiries.id, id))
-            .returning();
-        return result[0];
+        return updateReturning<Enquiry>(enquiries, id, { status: status as any, notes, updatedAt: new Date() });
     },
 
     // Assign enquiry to user
     async assign(id: string, userId: string): Promise<Enquiry | undefined> {
-        const result = await db.update(enquiries)
-            .set({ assignedTo: userId, updatedAt: new Date() })
-            .where(eq(enquiries.id, id))
-            .returning();
-        return result[0];
+        return updateReturning<Enquiry>(enquiries, id, { assignedTo: userId, updatedAt: new Date() });
     },
 
     // Delete enquiry
     async delete(id: string): Promise<boolean> {
-        const result = await db.delete(enquiries).where(eq(enquiries.id, id));
-        return result.length > 0;
+        const result: any = await db.delete(enquiries).where(eq(enquiries.id, id));
+        return result[0].affectedRows > 0;
     },
 
     // Get new enquiries count (for dashboard)
