@@ -1,4 +1,13 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+
+// Load env deterministically from server/.env regardless of the process CWD.
+// (src/config and dist/config are both two levels below the server root.)
+const __dirnameLocal = dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: resolve(__dirnameLocal, "../../.env") });
+// Also honour a CWD .env / already-set process env as a fallback.
+dotenv.config();
 
 export const env = {
     // Server
