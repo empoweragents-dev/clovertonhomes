@@ -60,7 +60,9 @@ export default function PropertyCard({ image, title, location, beds, baths, cars
                     </div>
                     <div className="flex flex-col items-center gap-0.5 w-1/4">
                         <span className="material-symbols-outlined text-primary text-[20px]">square_foot</span>
-                        <span className="text-xs font-medium text-gray-600">{area}m²</span>
+                        {/* A listing without a stated floor area shows a dash rather
+                            than "0 m²", which reads as a real measurement. */}
+                        <span className="text-xs font-medium text-gray-600">{area ? `${area}m²` : '—'}</span>
                     </div>
                 </div>
                 <div className="flex items-center justify-between pt-1">
