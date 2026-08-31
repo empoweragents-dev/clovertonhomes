@@ -47,6 +47,9 @@ REM Copy Package files
 copy server\package.json deploy\app\ >nul
 copy server\package-lock.json deploy\app\ >nul
 copy server\ecosystem.config.cjs deploy\app\ >nul
+REM .npmrc carries legacy-peer-deps, without which `npm install --production` on the
+REM host fails on the better-auth/drizzle-orm peer conflict.
+copy server\.npmrc deploy\app\ >nul
 copy server\.env.example deploy\app\.env.example >nul
 
 REM Create production .env from example (user needs to fill this)

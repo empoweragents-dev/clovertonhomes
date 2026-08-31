@@ -12,3 +12,11 @@ export * from "./settings";
 export * from "./auth";
 export * from "./designStudio";
 export * from "./gallery";
+
+// Document engine (tenders now, build contracts in phase 2).
+export * from "./documentSettings";
+export * from "./clauseLibrary";
+export * from "./documentTemplates";
+export * from "./clients";
+export * from "./documents";
+export * from "./auditLogs";

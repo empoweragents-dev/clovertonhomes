@@ -12,9 +12,13 @@
         "db:migrate": "drizzle-kit migrate",
         "db:push": "drizzle-kit push",
         "db:studio": "drizzle-kit studio",
-        "db:seed": "tsx src/db/seed.ts"
+        "db:seed": "tsx src/db/seed.ts",
+        "db:dump": "node scripts/dumpDatabase.mjs",
+        "db:apply:documents": "node scripts/applyDocumentTables.mjs src/db/sql/0001_document_engine.sql",
+        "db:seed:documents": "tsx src/db/seeds/documentSeed.ts"
     },
     "dependencies": {
+        "@react-pdf/renderer": "4.6.1",
         "@supabase/supabase-js": "^2.47.10",
         "better-auth": "^1.2.3",
         "cors": "^2.8.5",
@@ -26,6 +30,7 @@
         "mysql2": "^3.22.5",
         "next": "^16.0.10",
         "nodemailer": "^6.10.1",
+        "pdf-lib": "1.17.1",
         "postgres": "^3.4.5",
         "react": "^19.2.3",
         "react-dom": "^19.2.3",
@@ -39,6 +44,8 @@
         "@types/multer": "^1.4.12",
         "@types/node": "^22.10.2",
         "@types/nodemailer": "^6.4.24",
+        "@types/react": "^19.2.18",
+        "@types/react-dom": "^19.2.4",
         "@types/uuid": "^10.0.0",
         "drizzle-kit": "^0.31.8",
         "tsx": "^4.19.2",

@@ -15,9 +15,16 @@ export default function AdminSidebar() {
         { label: 'Inclusions', href: '/admin/inclusions', icon: 'list' },
         { label: 'Designs', href: '/admin/designs', icon: 'architecture' },
         { label: 'Studio', href: '/admin/studio', icon: 'design_services' },
+        { label: 'Documents', href: '/admin/documents', icon: 'description' },
         { label: 'Enquiries', href: '/admin/enquiries', icon: 'mail' },
         { label: 'Settings', href: '/admin/settings', icon: 'settings' },
     ]
+
+    // Exact match alone would un-highlight the parent as soon as you open a
+    // sub-route such as /admin/documents/settings. '/admin' is special-cased so the
+    // dashboard link doesn't match every page.
+    const isActive = (href: string) =>
+        pathname === href || (href !== '/admin' && pathname.startsWith(href + '/'))
 
     const handleLogout = async () => {
         try { await signOut() } catch { /* ignore */ }
@@ -35,7 +42,7 @@ export default function AdminSidebar() {
                     <Link
                         key={item.href}
                         href={item.href}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${pathname === item.href
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive(item.href)
                             ? 'bg-brand-teal text-white shadow-lg'
                             : 'text-gray-400 hover:text-white hover:bg-white/5'
                             }`}

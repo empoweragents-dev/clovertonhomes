@@ -12,6 +12,7 @@ import settingsRoutes from "./settingsRoutes";
 import uploadRoutes from "./uploadRoutes";
 import studioRoutes from "./studioRoutes";
 import galleryRoutes from "./galleryRoutes";
+import documentRoutes from "./documentRoutes";
 
 const router = Router();
 
@@ -29,5 +30,8 @@ router.use("/settings", settingsRoutes);
 router.use("/upload", uploadRoutes);
 router.use("/studio", studioRoutes);
 router.use("/gallery", galleryRoutes);
+
+// Document engine: tenders, templates, clause library, branding
+router.use("/documents", documentRoutes);
 
 export default router;

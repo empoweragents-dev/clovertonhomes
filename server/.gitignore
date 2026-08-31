@@ -24,3 +24,7 @@ Thumbs.db
 
 # Drizzle
 drizzle/
+
+# Generated tender/contract documents (local dev storage; production uses
+# DOCUMENT_STORAGE_DIR outside the app root)
+storage/
