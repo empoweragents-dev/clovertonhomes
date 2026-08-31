@@ -1,7 +1,7 @@
 import { mysqlTable, varchar, text, int, boolean, timestamp, decimal, mysqlEnum, index } from "drizzle-orm/mysql-core";
 import { randomUUID } from "crypto";
-import { jsonType } from "../customTypes";
-import { docTypeValues, gstModeValues } from "./documentSettings";
+import { jsonType } from "../customTypes.js";
+import { docTypeValues, gstModeValues } from "./documentSettings.js";
 
 /**
  * MASTER templates (§7). Creating a tender deep-copies a template into

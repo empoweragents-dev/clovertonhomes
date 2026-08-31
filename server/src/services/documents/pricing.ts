@@ -1,4 +1,4 @@
-import type { PricingTreatment } from "../../db/schema";
+import type { PricingTreatment } from "../../db/schema/index.js";
 
 /**
  * Pricing engine (§6). Integer cents throughout — no float ever touches money.

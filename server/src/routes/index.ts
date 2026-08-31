@@ -1,18 +1,18 @@
 import { Router } from "express";
-import regionRoutes from "./regionRoutes";
-import estateRoutes from "./estateRoutes";
-import designRoutes from "./designRoutes";
-import propertyRoutes from "./propertyRoutes";
-import enquiryRoutes from "./enquiryRoutes";
-import testimonialRoutes from "./testimonialRoutes";
-import consultantRoutes from "./consultantRoutes";
-import inclusionRoutes from "./inclusionRoutes";
-import favoriteRoutes from "./favoriteRoutes";
-import settingsRoutes from "./settingsRoutes";
-import uploadRoutes from "./uploadRoutes";
-import studioRoutes from "./studioRoutes";
-import galleryRoutes from "./galleryRoutes";
-import documentRoutes from "./documentRoutes";
+import regionRoutes from "./regionRoutes.js";
+import estateRoutes from "./estateRoutes.js";
+import designRoutes from "./designRoutes.js";
+import propertyRoutes from "./propertyRoutes.js";
+import enquiryRoutes from "./enquiryRoutes.js";
+import testimonialRoutes from "./testimonialRoutes.js";
+import consultantRoutes from "./consultantRoutes.js";
+import inclusionRoutes from "./inclusionRoutes.js";
+import favoriteRoutes from "./favoriteRoutes.js";
+import settingsRoutes from "./settingsRoutes.js";
+import uploadRoutes from "./uploadRoutes.js";
+import studioRoutes from "./studioRoutes.js";
+import galleryRoutes from "./galleryRoutes.js";
+import documentRoutes from "./documentRoutes.js";
 
 const router = Router();
 

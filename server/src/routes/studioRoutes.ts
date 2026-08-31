@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { studioService } from '../services/studioService';
-import { requireAuth, requireAdmin } from '../middleware/auth';
+import { studioService } from '../services/studioService.js';
+import { requireAuth, requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 

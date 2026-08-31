@@ -1,8 +1,8 @@
 import { Router } from "express";
 import multer from "multer";
-import { uploadService } from "../services";
-import { asyncHandler, requireAuth, requireAdmin } from "../middleware";
-import { STORAGE_BUCKETS } from "../config/supabase";
+import { uploadService } from "../services/index.js";
+import { asyncHandler, requireAuth, requireAdmin } from "../middleware/index.js";
+import { STORAGE_BUCKETS } from "../config/supabase.js";
 
 const router = Router();
 

@@ -1,9 +1,9 @@
 import { mysqlTable, varchar, text, boolean, timestamp, int, decimal, date, mysqlEnum } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { homeDesigns } from "./designs";
-import { regions } from "./regions";
-import { estates } from "./estates";
+import { homeDesigns } from "./designs.js";
+import { regions } from "./regions.js";
+import { estates } from "./estates.js";
 
 // Enum value set
 export const propertyBadgeValues = ["new", "fixed", "sold", "under_offer"] as const;

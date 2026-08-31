@@ -1,5 +1,5 @@
-import { db } from "../config/database";
-import { siteSettings, SiteSetting, NewSiteSetting } from "../db/schema";
+import { db } from "../config/database.js";
+import { siteSettings, SiteSetting, NewSiteSetting } from "../db/schema/index.js";
 import { eq } from "drizzle-orm";
 
 export const settingsService = {

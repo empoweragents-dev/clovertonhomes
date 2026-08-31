@@ -1,8 +1,8 @@
-import { db } from "../config/database";
-import { homeDesigns, designImages, designFloorplans, HomeDesign, NewHomeDesign, DesignImage, NewDesignImage } from "../db/schema";
+import { db } from "../config/database.js";
+import { homeDesigns, designImages, designFloorplans, HomeDesign, NewHomeDesign, DesignImage, NewDesignImage } from "../db/schema/index.js";
 import { eq, and, desc, like, gte, lte, inArray } from "drizzle-orm";
 import slugify from "slugify";
-import { insertReturning, updateReturning } from "../db/helpers";
+import { insertReturning, updateReturning } from "../db/helpers.js";
 
 export interface DesignFilters {
     category?: string;

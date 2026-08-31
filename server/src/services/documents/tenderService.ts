@@ -1,20 +1,20 @@
-import { db } from "../../config/database";
+import { db } from "../../config/database.js";
 import {
     documents, documentParties, documentSections, documentItems,
     documentPricingLines, documentRevisions, documentFiles,
     documentNumberSequences, documentTemplates, templateSections, templateItems,
     documentStatuses, editableDocumentStatuses,
     Document, DocumentSection, DocumentItem, DocumentParty, DocumentPricingLine, DocumentRevision, DocumentFile,
-} from "../../db/schema";
+} from "../../db/schema/index.js";
 import { eq, and, asc, sql, inArray } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { withTx, insertMany, Executor } from "../../db/txHelpers";
-import { insertReturning, updateReturning } from "../../db/helpers";
-import { renumber } from "./numbering";
-import { toHtml } from "./markup";
-import { calculateTotals, PricingLineInput } from "./pricing";
-import { brandService } from "./brandService";
-import { auditService } from "./auditService";
+import { withTx, insertMany, Executor } from "../../db/txHelpers.js";
+import { insertReturning, updateReturning } from "../../db/helpers.js";
+import { renumber } from "./numbering.js";
+import { toHtml } from "./markup.js";
+import { calculateTotals, PricingLineInput } from "./pricing.js";
+import { brandService } from "./brandService.js";
+import { auditService } from "./auditService.js";
 
 /**
  * Tender creation, editing and the snapshot mechanics (§30).

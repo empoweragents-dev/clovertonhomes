@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { galleryService } from '../services/galleryService';
-import { requireAuth, requireAdmin } from '../middleware/auth';
+import { galleryService } from '../services/galleryService.js';
+import { requireAuth, requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 

@@ -1,8 +1,8 @@
-import { db } from "../config/database";
-import { enquiries, Enquiry, NewEnquiry, properties, homeDesigns, consultants } from "../db/schema";
+import { db } from "../config/database.js";
+import { enquiries, Enquiry, NewEnquiry, properties, homeDesigns, consultants } from "../db/schema/index.js";
 import { eq, and, desc } from "drizzle-orm";
-import { emailService } from "./emailService";
-import { insertReturning, updateReturning } from "../db/helpers";
+import { emailService } from "./emailService.js";
+import { insertReturning, updateReturning } from "../db/helpers.js";
 
 export interface EnquiryFilters {
     type?: string;

@@ -1,4 +1,4 @@
-import { uploadFile, deleteFile, STORAGE_BUCKETS, getPublicUrl } from "../config/supabase";
+import { uploadFile, deleteFile, STORAGE_BUCKETS, getPublicUrl } from "../config/supabase.js";
 import { v4 as uuidv4 } from "uuid";
 
 export interface UploadResult {

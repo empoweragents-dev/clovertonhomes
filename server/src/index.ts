@@ -4,10 +4,10 @@ import helmet from "helmet";
 import next from "next";
 import path from "path";
 import { toNodeHandler } from "better-auth/node";
-import { env } from "./config/env";
-import { auth } from "./config/auth";
-import apiRoutes from "./routes";
-import { errorHandler, notFoundHandler } from "./middleware";
+import { env } from "./config/env.js";
+import { auth } from "./config/auth.js";
+import apiRoutes from "./routes/index.js";
+import { errorHandler, notFoundHandler } from "./middleware/index.js";
 
 // Initialize Next.js
 const dev = env.NODE_ENV !== "production";

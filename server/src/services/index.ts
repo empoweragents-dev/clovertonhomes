@@ -1,13 +1,13 @@
-export { regionService } from "./regionService";
-export { estateService } from "./estateService";
-export { designService } from "./designService";
-export { propertyService } from "./propertyService";
-export { enquiryService } from "./enquiryService";
-export { testimonialService } from "./testimonialService";
-export { consultantService } from "./consultantService";
-export { inclusionService } from "./inclusionService";
-export { favoriteService } from "./favoriteService";
-export { settingsService } from "./settingsService";
-export { uploadService } from "./uploadService";
-export { emailService } from "./emailService";
+export { regionService } from "./regionService.js";
+export { estateService } from "./estateService.js";
+export { designService } from "./designService.js";
+export { propertyService } from "./propertyService.js";
+export { enquiryService } from "./enquiryService.js";
+export { testimonialService } from "./testimonialService.js";
+export { consultantService } from "./consultantService.js";
+export { inclusionService } from "./inclusionService.js";
+export { favoriteService } from "./favoriteService.js";
+export { settingsService } from "./settingsService.js";
+export { uploadService } from "./uploadService.js";
+export { emailService } from "./emailService.js";
 

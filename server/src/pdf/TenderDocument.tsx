@@ -1,8 +1,8 @@
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
-import { FONT_BODY, FONT_HEADING } from "./fonts";
-import { readAsset } from "./assets";
-import { renderRichText, plainLength, countListItems } from "./richText";
-import type { DocumentSnapshot, SnapshotItem } from "../services/documents/snapshot";
+import { FONT_BODY, FONT_HEADING } from "./fonts.js";
+import { readAsset } from "./assets.js";
+import { renderRichText, plainLength, countListItems } from "./richText.js";
+import type { DocumentSnapshot, SnapshotItem } from "../services/documents/snapshot.js";
 
 /**
  * The Cloverton tender PDF.

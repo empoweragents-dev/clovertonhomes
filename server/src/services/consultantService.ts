@@ -1,7 +1,7 @@
-import { db } from "../config/database";
-import { consultants, Consultant, NewConsultant } from "../db/schema";
+import { db } from "../config/database.js";
+import { consultants, Consultant, NewConsultant } from "../db/schema/index.js";
 import { eq } from "drizzle-orm";
-import { insertReturning, updateReturning } from "../db/helpers";
+import { insertReturning, updateReturning } from "../db/helpers.js";
 
 export const consultantService = {
     // Get all active consultants

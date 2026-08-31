@@ -1,13 +1,13 @@
-import { db } from "../../config/database";
+import { db } from "../../config/database.js";
 import {
     documents, documentParties, documentSections, documentItems,
     documentPricingLines, documentRevisions, Document, DocumentParty,
-} from "../../db/schema";
+} from "../../db/schema/index.js";
 import { eq, asc } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { withTx, insertMany } from "../../db/txHelpers";
-import { tenderService } from "./tenderService";
-import { auditService } from "./auditService";
+import { withTx, insertMany } from "../../db/txHelpers.js";
+import { tenderService } from "./tenderService.js";
+import { auditService } from "./auditService.js";
 
 /**
  * Duplicate a tender for another client (§24).

@@ -1,6 +1,6 @@
 import { mysqlTable, varchar, text, int, timestamp, index } from "drizzle-orm/mysql-core";
 import { randomUUID } from "crypto";
-import { jsonType } from "../customTypes";
+import { jsonType } from "../customTypes.js";
 
 /**
  * Append-only audit trail (§35). Commercially meaningful changes are recorded with

@@ -1,5 +1,5 @@
-import { db } from "../../config/database";
-import { documents, documentFiles, Document, DocumentStatus } from "../../db/schema";
+import { db } from "../../config/database.js";
+import { documents, documentFiles, Document, DocumentStatus } from "../../db/schema/index.js";
 import { and, or, eq, like, desc, gte, lte, inArray, SQL } from "drizzle-orm";
 
 /**

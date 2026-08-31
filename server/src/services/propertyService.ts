@@ -1,11 +1,11 @@
-import { db } from "../config/database";
+import { db } from "../config/database.js";
 import {
     properties, propertyImages, Property, NewProperty, PropertyImage, NewPropertyImage,
     homeDesigns, estates, regions, consultants
-} from "../db/schema";
+} from "../db/schema/index.js";
 import { eq, and, desc, like, gte, lte, or } from "drizzle-orm";
 import slugify from "slugify";
-import { insertReturning, updateReturning } from "../db/helpers";
+import { insertReturning, updateReturning } from "../db/helpers.js";
 
 export interface PropertyFilters {
     regionId?: string;

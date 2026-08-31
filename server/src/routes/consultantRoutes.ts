@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { consultantService } from "../services";
-import { asyncHandler, requireAuth, requireAdmin } from "../middleware";
+import { consultantService } from "../services/index.js";
+import { asyncHandler, requireAuth, requireAdmin } from "../middleware/index.js";
 
 const router = Router();
 

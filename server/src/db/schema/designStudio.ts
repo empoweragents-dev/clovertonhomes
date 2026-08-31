@@ -1,6 +1,6 @@
 import { mysqlTable, varchar, text, int, boolean, timestamp } from 'drizzle-orm/mysql-core';
 import { randomUUID } from "crypto";
-import { jsonType } from "../customTypes";
+import { jsonType } from "../customTypes.js";
 
 // Floor Plans for Design Studio
 export const studioFloorPlans = mysqlTable('studio_floor_plans', {

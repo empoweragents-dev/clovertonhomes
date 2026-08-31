@@ -1,9 +1,9 @@
 import { mysqlTable, varchar, text, int, boolean, timestamp, date, decimal, mysqlEnum, index, uniqueIndex } from "drizzle-orm/mysql-core";
 import { randomUUID } from "crypto";
-import { jsonType } from "../customTypes";
-import { docTypeValues, gstModeValues } from "./documentSettings";
-import { clientTypeValues } from "./clients";
-import type { PdfConfig } from "./documentTemplates";
+import { jsonType } from "../customTypes.js";
+import { docTypeValues, gstModeValues } from "./documentSettings.js";
+import { clientTypeValues } from "./clients.js";
+import type { PdfConfig } from "./documentTemplates.js";
 
 /**
  * DOCUMENT INSTANCES — a tender now, a build contract in phase 2 (hence the generic

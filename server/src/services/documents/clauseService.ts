@@ -1,14 +1,14 @@
-import { db } from "../../config/database";
+import { db } from "../../config/database.js";
 import {
     clauseLibrary, clauseLibraryVersions,
     ClauseLibraryEntry, ClauseLibraryVersion,
-} from "../../db/schema";
+} from "../../db/schema/index.js";
 import { eq, asc, desc } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import slugify from "slugify";
-import { updateReturning } from "../../db/helpers";
-import { toHtml } from "./markup";
-import { auditService } from "./auditService";
+import { updateReturning } from "../../db/helpers.js";
+import { toHtml } from "./markup.js";
+import { auditService } from "./auditService.js";
 
 /**
  * Terms & conditions library (§12) with version history (§13).

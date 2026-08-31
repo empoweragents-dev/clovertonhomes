@@ -1,8 +1,8 @@
-import { db } from "../config/database";
-import { regions, Region, NewRegion } from "../db/schema";
+import { db } from "../config/database.js";
+import { regions, Region, NewRegion } from "../db/schema/index.js";
 import { eq } from "drizzle-orm";
 import slugify from "slugify";
-import { insertReturning, updateReturning } from "../db/helpers";
+import { insertReturning, updateReturning } from "../db/helpers.js";
 
 export const regionService = {
     // Get all active regions

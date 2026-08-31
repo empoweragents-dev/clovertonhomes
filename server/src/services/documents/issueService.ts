@@ -1,17 +1,17 @@
-import { db } from "../../config/database";
+import { db } from "../../config/database.js";
 import {
     documents, documentRevisions, documentFiles, documentItems,
     Document, DocumentRevision,
-} from "../../db/schema";
+} from "../../db/schema/index.js";
 import { eq, and, desc } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { withTx } from "../../db/txHelpers";
-import { tenderService } from "./tenderService";
-import { snapshotService, DocumentSnapshot } from "./snapshot";
-import { brandService } from "./brandService";
-import { documentStorage } from "./storage";
-import { auditService } from "./auditService";
-import { renderTenderPdf } from "../../pdf/render";
+import { withTx } from "../../db/txHelpers.js";
+import { tenderService } from "./tenderService.js";
+import { snapshotService, DocumentSnapshot } from "./snapshot.js";
+import { brandService } from "./brandService.js";
+import { documentStorage } from "./storage.js";
+import { auditService } from "./auditService.js";
+import { renderTenderPdf } from "../../pdf/render.js";
 
 /**
  * Validation, issuing and revisions.

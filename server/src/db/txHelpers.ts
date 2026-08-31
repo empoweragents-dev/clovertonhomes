@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { db } from "../config/database";
+import { db } from "../config/database.js";
 
 /**
  * Transaction-aware write helpers.

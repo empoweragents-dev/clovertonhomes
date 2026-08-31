@@ -1,8 +1,8 @@
 import { renderToBuffer } from "@react-pdf/renderer";
-import { TenderDocument } from "./TenderDocument";
-import { registerPdfFonts } from "./fonts";
-import { stampPageNumbers } from "./stampPageNumbers";
-import type { DocumentSnapshot } from "../services/documents/snapshot";
+import { TenderDocument } from "./TenderDocument.js";
+import { registerPdfFonts } from "./fonts.js";
+import { stampPageNumbers } from "./stampPageNumbers.js";
+import type { DocumentSnapshot } from "../services/documents/snapshot.js";
 
 /**
  * PDF rendering entry point.

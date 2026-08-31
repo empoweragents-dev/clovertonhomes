@@ -1,7 +1,7 @@
-import { db } from '../config/database';
-import { studioFloorPlans, studioFacades, studioSubmissions, StudioFloorPlan, NewStudioFloorPlan, StudioFacade, NewStudioFacade, StudioSubmission, NewStudioSubmission } from '../db/schema';
+import { db } from '../config/database.js';
+import { studioFloorPlans, studioFacades, studioSubmissions, StudioFloorPlan, NewStudioFloorPlan, StudioFacade, NewStudioFacade, StudioSubmission, NewStudioSubmission } from '../db/schema/index.js';
 import { eq, desc, asc, and } from 'drizzle-orm';
-import { insertReturning, updateReturning } from '../db/helpers';
+import { insertReturning, updateReturning } from '../db/helpers.js';
 
 export const studioService = {
     // Floor Plans

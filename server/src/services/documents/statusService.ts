@@ -1,7 +1,7 @@
-import { db } from "../../config/database";
-import { documentStatuses, DocumentItemStatus, statusTreatmentValues } from "../../db/schema";
+import { db } from "../../config/database.js";
+import { documentStatuses, DocumentItemStatus, statusTreatmentValues } from "../../db/schema/index.js";
 import { eq, asc } from "drizzle-orm";
-import { insertReturning, updateReturning } from "../../db/helpers";
+import { insertReturning, updateReturning } from "../../db/helpers.js";
 
 /**
  * The inclusion-status vocabulary (§9). Extensible: staff can add their own beyond

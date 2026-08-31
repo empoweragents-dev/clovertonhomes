@@ -1,13 +1,13 @@
-import { db } from "../config/database";
+import { db } from "../config/database.js";
 import {
     inclusionTiers, inclusionCategories, inclusionItems,
     InclusionTier, NewInclusionTier,
     InclusionCategory, NewInclusionCategory,
     InclusionItem, NewInclusionItem
-} from "../db/schema";
+} from "../db/schema/index.js";
 import { eq } from "drizzle-orm";
 import slugify from "slugify";
-import { insertReturning, updateReturning } from "../db/helpers";
+import { insertReturning, updateReturning } from "../db/helpers.js";
 
 export const inclusionService = {
     // === TIERS ===

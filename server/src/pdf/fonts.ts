@@ -1,5 +1,5 @@
 import { Font } from "@react-pdf/renderer";
-import { resolveAssetPath } from "./assets";
+import { resolveAssetPath } from "./assets.js";
 
 /**
  * Registers the document fonts once per process.

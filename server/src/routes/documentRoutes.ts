@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { brandService, statusService, documentService, templateService, clauseService } from "../services/documents";
-import { asyncHandler, requireAuth, requireAdmin } from "../middleware";
-import tenderRoutes from "./tenderRoutes";
+import { brandService, statusService, documentService, templateService, clauseService } from "../services/documents/index.js";
+import { asyncHandler, requireAuth, requireAdmin } from "../middleware/index.js";
+import tenderRoutes from "./tenderRoutes.js";
 
 const router = Router();
 

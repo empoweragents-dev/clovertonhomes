@@ -2,12 +2,12 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import * as dotenv from "dotenv";
-import * as schema from "./schema";
+import * as schema from "./schema/index.js";
 import {
     regions, estates, homeDesigns, properties,
     designImages, designFloorplans, propertyImages,
     user, account
-} from "./schema";
+} from "./schema/index.js";
 import slugify from "slugify";
 import { v4 as uuidv4 } from "uuid";
 

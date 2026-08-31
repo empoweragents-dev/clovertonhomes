@@ -1,6 +1,6 @@
 import { mysqlTable, varchar, text, int, boolean, timestamp, date, index, uniqueIndex } from "drizzle-orm/mysql-core";
 import { randomUUID } from "crypto";
-import { jsonType } from "../customTypes";
+import { jsonType } from "../customTypes.js";
 
 /**
  * Reusable terms & conditions clauses (§12) with full version history (§13).

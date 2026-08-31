@@ -1,7 +1,7 @@
 import { mysqlTable, varchar, text, boolean, int } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { jsonType } from "../customTypes";
+import { jsonType } from "../customTypes.js";
 
 // Inclusion Tiers table (e.g., Designer, Elegance)
 export const inclusionTiers = mysqlTable("inclusion_tiers", {

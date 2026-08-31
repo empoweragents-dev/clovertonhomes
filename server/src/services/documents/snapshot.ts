@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
-import { tenderService } from "./tenderService";
-import { brandService } from "./brandService";
-import { calculateTotals, PRICING_TREATMENTS, formatCents } from "./pricing";
+import { tenderService } from "./tenderService.js";
+import { brandService } from "./brandService.js";
+import { calculateTotals, PRICING_TREATMENTS, formatCents } from "./pricing.js";
 
 /**
  * Builds the frozen payload a PDF is rendered from (§30).

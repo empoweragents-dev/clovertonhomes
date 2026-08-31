@@ -10,15 +10,15 @@
  *   npm run db:seed:documents            show the plan
  *   npm run db:seed:documents -- --create   insert if the template is absent
  */
-import { db } from "../../config/database";
-import { documentTemplates, templateSections, templateItems } from "../schema";
+import { db } from "../../config/database.js";
+import { documentTemplates, templateSections, templateItems } from "../schema/index.js";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { statusService, brandService } from "../../services/documents";
-import { toHtml } from "../../services/documents/markup";
+import { statusService, brandService } from "../../services/documents/index.js";
+import { toHtml } from "../../services/documents/markup.js";
 import {
     clovertonStandardSections, CLOVERTON_STANDARD_SLUG, EXPECTED_ITEM_COUNT,
-} from "./data/clovertonStandardTemplate";
+} from "./data/clovertonStandardTemplate.js";
 
 const commit = process.argv.includes("--create");
 

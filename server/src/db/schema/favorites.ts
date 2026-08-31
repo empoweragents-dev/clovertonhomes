@@ -1,8 +1,8 @@
 import { mysqlTable, varchar, timestamp } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { properties } from "./properties";
-import { homeDesigns } from "./designs";
+import { properties } from "./properties.js";
+import { homeDesigns } from "./designs.js";
 
 // User Favorites table
 export const favorites = mysqlTable("favorites", {

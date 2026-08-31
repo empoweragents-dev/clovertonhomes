@@ -1,7 +1,7 @@
-import { db } from '../config/database';
-import { interiorSchemes, galleryImages, InteriorScheme, NewInteriorScheme, GalleryImage, NewGalleryImage } from '../db/schema';
+import { db } from '../config/database.js';
+import { interiorSchemes, galleryImages, InteriorScheme, NewInteriorScheme, GalleryImage, NewGalleryImage } from '../db/schema/index.js';
 import { eq, desc, asc, and } from 'drizzle-orm';
-import { insertReturning, updateReturning } from '../db/helpers';
+import { insertReturning, updateReturning } from '../db/helpers.js';
 
 export const galleryService = {
     // Interior Schemes

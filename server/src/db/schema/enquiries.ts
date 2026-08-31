@@ -1,9 +1,9 @@
 import { mysqlTable, varchar, text, timestamp, mysqlEnum } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { properties } from "./properties";
-import { homeDesigns } from "./designs";
-import { consultants } from "./consultants";
+import { properties } from "./properties.js";
+import { homeDesigns } from "./designs.js";
+import { consultants } from "./consultants.js";
 
 // Enum value sets
 export const enquiryTypeValues = ["general", "property", "design", "custom_build"] as const;

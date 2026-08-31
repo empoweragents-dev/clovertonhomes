@@ -1,14 +1,14 @@
-import { db } from "../../config/database";
+import { db } from "../../config/database.js";
 import {
     documentTemplates, templateSections, templateItems,
     DocumentTemplate, TemplateSection, TemplateItem,
-} from "../../db/schema";
+} from "../../db/schema/index.js";
 import { eq, and, asc, sql, inArray } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import slugify from "slugify";
-import { insertReturning, updateReturning } from "../../db/helpers";
-import { toHtml } from "./markup";
-import { renumber } from "./numbering";
+import { insertReturning, updateReturning } from "../../db/helpers.js";
+import { toHtml } from "./markup.js";
+import { renumber } from "./numbering.js";
 
 /**
  * Master templates (§7). A tender copies one of these into its own tables at

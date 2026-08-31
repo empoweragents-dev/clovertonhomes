@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
-import { env } from "./env";
-import * as schema from "../db/schema";
+import { env } from "./env.js";
+import * as schema from "../db/schema/index.js";
 
 // Create MySQL connection pool. Hostinger closes idle connections, so enable
 // keepalive and bound idle sockets to avoid ECONNRESET on reused connections.

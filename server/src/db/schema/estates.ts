@@ -1,7 +1,7 @@
 import { mysqlTable, varchar, text, boolean, timestamp, decimal } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { regions } from "./regions";
+import { regions } from "./regions.js";
 
 // Estates table
 export const estates = mysqlTable("estates", {

@@ -1,7 +1,7 @@
-import { db } from "../config/database";
-import { favorites, Favorite, NewFavorite, properties, homeDesigns } from "../db/schema";
+import { db } from "../config/database.js";
+import { favorites, Favorite, NewFavorite, properties, homeDesigns } from "../db/schema/index.js";
 import { eq, and } from "drizzle-orm";
-import { insertReturning } from "../db/helpers";
+import { insertReturning } from "../db/helpers.js";
 
 export const favoriteService = {
     // Get user's favorites

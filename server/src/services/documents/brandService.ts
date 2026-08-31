@@ -1,5 +1,5 @@
-import { db } from "../../config/database";
-import { documentBrandSettings, DocumentBrandSettings } from "../../db/schema";
+import { db } from "../../config/database.js";
+import { documentBrandSettings, DocumentBrandSettings } from "../../db/schema/index.js";
 import { eq } from "drizzle-orm";
 
 /**

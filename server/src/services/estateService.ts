@@ -1,8 +1,8 @@
-import { db } from "../config/database";
-import { estates, Estate, NewEstate, regions } from "../db/schema";
+import { db } from "../config/database.js";
+import { estates, Estate, NewEstate, regions } from "../db/schema/index.js";
 import { eq, and } from "drizzle-orm";
 import slugify from "slugify";
-import { insertReturning, updateReturning } from "../db/helpers";
+import { insertReturning, updateReturning } from "../db/helpers.js";
 
 export const estateService = {
     // Get all estates with region

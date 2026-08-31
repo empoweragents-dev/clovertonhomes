@@ -1,8 +1,8 @@
-import { db } from "../../config/database";
-import { documentRevisions } from "../../db/schema";
+import { db } from "../../config/database.js";
+import { documentRevisions } from "../../db/schema/index.js";
 import { eq, and } from "drizzle-orm";
-import { snapshotService, DocumentSnapshot } from "./snapshot";
-import { formatCents } from "./pricing";
+import { snapshotService, DocumentSnapshot } from "./snapshot.js";
+import { formatCents } from "./pricing.js";
 
 /**
  * Revision comparison (§25).

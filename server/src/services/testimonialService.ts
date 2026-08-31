@@ -1,7 +1,7 @@
-import { db } from "../config/database";
-import { testimonials, Testimonial, NewTestimonial } from "../db/schema";
+import { db } from "../config/database.js";
+import { testimonials, Testimonial, NewTestimonial } from "../db/schema/index.js";
 import { eq, and, desc } from "drizzle-orm";
-import { insertReturning, updateReturning } from "../db/helpers";
+import { insertReturning, updateReturning } from "../db/helpers.js";
 
 export const testimonialService = {
     // Get all active testimonials
