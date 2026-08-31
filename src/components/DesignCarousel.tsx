@@ -56,6 +56,11 @@ export default function DesignCarousel() {
         return d.storeys === activeFilter
     })
 
+    // With no designs published at all, drop the whole section rather than render
+    // a heading, filter chips and an empty rail. "No designs match this filter"
+    // below is for the different case: designs exist, but this filter excludes them.
+    if (!loading && !error && designs.length === 0) return null
+
     return (
         <section className="overflow-hidden bg-[#202624] py-20 text-white sm:py-28">
             <div className="home-container">
