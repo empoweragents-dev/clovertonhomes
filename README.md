@@ -1,6 +1,6 @@
 # Cloverton Homes - Premium Residential Builder
 
-A modern, responsive website built with Next.js 14, TypeScript, and Tailwind CSS.
+A modern, responsive website built with Next.js 16, TypeScript, and Tailwind CSS.
 
 ## Features
 
@@ -57,11 +57,26 @@ src/
 
 ## Technologies
 
-- **Next.js 14** - React framework with App Router
+- **Next.js 16** - React framework with App Router
 - **TypeScript** - Type safety
 - **Tailwind CSS** - Utility-first styling
 - **Google Fonts** - Inter & Outfit typefaces
 - **Material Symbols** - Icon library
+
+## Hostinger Deployment
+
+Configure Hostinger to deploy the repository root from the `main` branch:
+
+- Node.js version: `20.9.0` or newer (Node.js 22 LTS recommended)
+- Install command: `npm ci`
+- Build command: `npm run build`
+- Start command: `npm start`
+- Application port: use Hostinger's `PORT` environment variable
+
+Add the production variables listed in `server/.env.example` through Hostinger's
+environment variable settings. At minimum, configure the database, Supabase,
+Better Auth, trusted origin, frontend URL, and SMTP values. Do not commit a real
+`.env` file or any credentials to Git.
 
 ## Customization
 
