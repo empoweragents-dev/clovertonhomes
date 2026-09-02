@@ -43,6 +43,41 @@ function recordBuildOutput(chunk) {
     }
 }
 
+/**
+ * The memory this process is actually allowed, in MB, or null if unknown.
+ *
+ * os.totalmem() reports the whole machine on shared hosting -- 15 GB on a
+ * container that may be allowed 512 MB -- and Node sizes its heap from that. It
+ * then happily grows past the container limit and is killed by the OOM killer,
+ * which surfaces as a bare exit 1 with no error text. cgroup is the only source
+ * that knows the real ceiling.
+ */
+function detectMemoryLimitMb() {
+    const sources = [
+        "/sys/fs/cgroup/memory.max",                     // cgroup v2
+        "/sys/fs/cgroup/memory/memory.limit_in_bytes",   // cgroup v1
+    ];
+    for (const file of sources) {
+        try {
+            const raw = require("fs").readFileSync(file, "utf8").trim();
+            if (raw === "max") continue;
+            const bytes = Number.parseInt(raw, 10);
+            // v1 reports an absurd sentinel when unlimited.
+            if (Number.isFinite(bytes) && bytes > 0 && bytes < 64 * 1024 * 1024 * 1024) {
+                return Math.round(bytes / 1048576);
+            }
+        } catch { /* not linux, or not readable */ }
+    }
+    return null;
+}
+
+/** Heap cap for the build: most of the container, not most of the machine. */
+function buildHeapMb() {
+    const limit = detectMemoryLimitMb();
+    if (!limit) return 1024;
+    return Math.max(384, Math.min(3072, Math.round(limit * 0.75)));
+}
+
 function setPhase(phase) {
     state.phase = phase;
     state.since = Date.now();
@@ -64,7 +99,9 @@ app.get("/health", (req, res) => {
         ...(state.phase === "failed" && state.buildLog.length ? { buildLog: state.buildLog } : {}),
         nodeEnv: process.env.NODE_ENV,
         nodeVersion: process.version,
-        memoryMb: Math.round(require("os").totalmem() / 1048576),
+        machineMemoryMb: Math.round(require("os").totalmem() / 1048576),
+        containerMemoryMb: detectMemoryLimitMb(),
+        buildHeapMb: buildHeapMb(),
         cwd: process.cwd(),
         appDir: root,
         timestamp: new Date().toISOString(),
@@ -128,7 +165,7 @@ function runCli(packageName, relativeEntry, args) {
             stdio: ["ignore", "pipe", "pipe"],
             env: {
                 ...process.env,
-                NODE_OPTIONS: process.env.NODE_OPTIONS || "--max-old-space-size=1024",
+                NODE_OPTIONS: process.env.NODE_OPTIONS || `--max-old-space-size=${buildHeapMb()}`,
                 NEXT_TELEMETRY_DISABLED: "1",
             },
         });
