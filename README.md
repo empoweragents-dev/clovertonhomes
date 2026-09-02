@@ -65,12 +65,17 @@ src/
 
 ## Hostinger Deployment
 
-Configure Hostinger to deploy the repository root from the `main` branch:
+Configure Hostinger to deploy the repository root from the `main` branch as an
+Express application. Express is the public process; it serves the API and the
+compiled Next.js website from one Node.js service.
 
+- Framework preset: `Express`
 - Node.js version: `20.9.0` or newer (Node.js 22 LTS recommended)
 - Install command: `npm ci`
 - Build command: `npm run build`
 - Start command: `npm start`
+- Entry file: `app.mjs`
+- Output directory: leave empty (use `.` only if Hostinger requires a value)
 - Application port: use Hostinger's `PORT` environment variable
 
 Add the production variables listed in `server/.env.example` through Hostinger's

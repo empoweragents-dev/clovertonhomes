@@ -1,15 +1,18 @@
 {
   "name": "cloverton-homes",
   "version": "0.1.0",
+  "description": "Cloverton Homes Express application",
   "private": true,
+  "main": "app.mjs",
   "engines": {
     "node": ">=20.9.0"
   },
   "scripts": {
     "dev": "next dev",
-    "build": "npm run build:server && next build",
+    "build": "npm run build:server && npm run build:web",
     "build:server": "npx tsc --project server/tsconfig.json",
-    "start": "node server/dist/index.js",
+    "build:web": "next build",
+    "start": "node app.mjs",
     "lint": "next lint",
     "db:push": "cd server && drizzle-kit push",
     "db:studio": "cd server && drizzle-kit studio"
