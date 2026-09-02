@@ -2,4 +2,7 @@
 // Set it before loading the compiled server so Next uses the production build.
 process.env.NODE_ENV ||= "production";
 
-await import("./server/dist/index.js");
+import("./server/dist/index.js").catch((error) => {
+    console.error("Failed to start Cloverton Homes:", error);
+    process.exit(1);
+});

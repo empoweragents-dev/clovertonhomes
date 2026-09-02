@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Cloverton Homes Express application",
   "private": true,
-  "main": "app.mjs",
+  "main": "app.js",
   "engines": {
     "node": ">=20.9.0"
   },
@@ -12,7 +12,7 @@
     "build": "npm run build:server && npm run build:web",
     "build:server": "npx tsc --project server/tsconfig.json",
     "build:web": "next build",
-    "start": "node app.mjs",
+    "start": "node app.js",
     "lint": "next lint",
     "db:push": "cd server && drizzle-kit push",
     "db:studio": "cd server && drizzle-kit studio"

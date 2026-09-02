@@ -74,7 +74,7 @@ compiled Next.js website from one Node.js service.
 - Install command: `npm ci`
 - Build command: `npm run build`
 - Start command: `npm start`
-- Entry file: `app.mjs`
+- Entry file: `app.js`
 - Output directory: leave empty (use `.` only if Hostinger requires a value)
 - Application port: use Hostinger's `PORT` environment variable
 
