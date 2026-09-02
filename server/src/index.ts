@@ -3,6 +3,8 @@ import cors from "cors";
 import helmet from "helmet";
 import next from "next";
 import path from "path";
+import { existsSync } from "fs";
+import { fileURLToPath } from "url";
 import { toNodeHandler } from "better-auth/node";
 import { env } from "./config/env.js";
 import { auth } from "./config/auth.js";
@@ -11,10 +13,36 @@ import { errorHandler, notFoundHandler } from "./middleware/index.js";
 
 // Initialize Next.js
 const dev = env.NODE_ENV !== "production";
+
+/**
+ * Locates the directory holding the Next build. The two deploy layouts put it in
+ * different places relative to this file, and the process cwd is set by the host
+ * rather than by us, so neither assumption is safe on its own:
+ *
+ *   git build, root "./"   ->  <repo>/server/dist/index.js  with <repo>/.next
+ *   packaged deploy/app    ->  <app>/dist/index.js          with <app>/.next
+ *
+ * Checks cwd first (correct for both when the host sets it as expected), then walks
+ * up from this file. Falls back to cwd so the failure is Next's own clear message
+ * rather than a confusing path error.
+ */
+function resolveNextDir(): string {
+    const here = path.dirname(fileURLToPath(import.meta.url));
+    const candidates = [
+        process.cwd(),
+        path.resolve(here, ".."),        // <app>/dist/index.js  -> <app>
+        path.resolve(here, "..", ".."),  // <repo>/server/dist   -> <repo>
+    ];
+    for (const dir of candidates) {
+        if (existsSync(path.join(dir, ".next"))) return dir;
+    }
+    console.warn("Could not locate a .next build; falling back to cwd:", process.cwd());
+    return process.cwd();
+}
+
 const nextApp = next({
     dev,
-    // In production, we expect .next to be in the same folder as the running script
-    dir: dev ? "../" : process.cwd(),
+    dir: dev ? "../" : resolveNextDir(),
 });
 const handle = nextApp.getRequestHandler();
 
