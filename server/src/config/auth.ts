@@ -18,7 +18,19 @@ import { env } from "./env.js";
  * serving. The cause is logged once, loudly, with the fix.
  */
 
-let instance: ReturnType<typeof betterAuth> | null = null;
+/**
+ * Derived from build(), NOT from `typeof betterAuth`.
+ *
+ * betterAuth() returns Auth<> parameterised by the exact options object passed
+ * in, so `ReturnType<typeof betterAuth>` -- which resolves to the generic
+ * default Auth<BetterAuthOptions> -- is a different, incompatible type. It
+ * happened to compile against one 1.x release and failed against a later one,
+ * breaking the production build while the local build stayed green. Deriving
+ * from build() means the type follows whatever the installed version returns.
+ */
+type AuthInstance = ReturnType<typeof build>;
+
+let instance: AuthInstance | null = null;
 let initialised = false;
 
 function build() {
@@ -54,7 +66,7 @@ function build() {
 }
 
 /** The auth instance, or null when it could not be configured. Never throws. */
-export function getAuth(): ReturnType<typeof betterAuth> | null {
+export function getAuth(): AuthInstance | null {
     if (initialised) return instance;
     initialised = true;
 
@@ -83,4 +95,4 @@ export function getAuth(): ReturnType<typeof betterAuth> | null {
     return instance;
 }
 
-export type Auth = ReturnType<typeof betterAuth>;
+export type Auth = AuthInstance;
