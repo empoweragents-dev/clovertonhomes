@@ -79,22 +79,35 @@ export async function prepareApp(app: Express): Promise<void> {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
-    // Cache control middleware - Prevents stale HTML cache issues
+    // Cache control.
+    //
+    // The header has to be set as the response goes out, not on the way in.
+    // Next writes its own Cache-Control afterwards, and for a statically
+    // prerendered page that is `s-maxage=31536000` -- so the CDN cached the
+    // homepage for a year, kept serving it after a redeploy, and the HTML asked
+    // for CSS chunk hashes that no longer existed. The page arrived unstyled on
+    // first load while client-side navigation, which fetches from the origin,
+    // looked fine.
+    //
+    // Content-hashed assets are safe to cache forever; the documents that
+    // reference them are not, because their asset hashes change every build.
     app.use((req, res, next) => {
-        const path = req.path;
+        const requestPath = req.path;
 
-        // Static assets from _next should be cached aggressively (content-hashed, immutable)
-        if (path.startsWith('/_next/static/')) {
-            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-        }
-        // Images can be cached for a moderate time
-        else if (path.match(/\.(jpg|jpeg|png|gif|webp|svg|ico)$/)) {
-            res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
-        }
-        // HTML pages should not be cached long to prevent stale references to CSS/JS chunks
-        else if (path.endsWith('.html') || !path.includes('.')) {
-            res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=60, must-revalidate');
-        }
+        const value =
+            requestPath.startsWith('/_next/static/') || requestPath.startsWith('/uploads/')
+                ? 'public, max-age=31536000, immutable'
+                : /\.(jpg|jpeg|png|gif|webp|svg|ico|woff2?|ttf)$/.test(requestPath)
+                    ? 'public, max-age=86400'
+                    // Documents: let the CDN hold them only briefly, and always
+                    // revalidate, so a deploy takes effect within the minute.
+                    : 'public, max-age=0, s-maxage=60, must-revalidate';
+
+        const writeHead = res.writeHead.bind(res);
+        res.writeHead = function patched(...args: Parameters<typeof writeHead>) {
+            res.setHeader('Cache-Control', value);
+            return writeHead(...args);
+        } as typeof res.writeHead;
 
         next();
     });
