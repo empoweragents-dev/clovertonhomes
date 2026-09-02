@@ -15,7 +15,8 @@
     "start": "node app.js",
     "lint": "next lint",
     "db:push": "cd server && drizzle-kit push",
-    "db:studio": "cd server && drizzle-kit studio"
+    "db:studio": "cd server && drizzle-kit studio",
+    "postinstall": "node scripts/ensure-build.mjs"
   },
   "dependencies": {
     "@getbrevo/brevo": "^3.0.1",
