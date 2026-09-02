@@ -207,7 +207,12 @@ async function ensureBuild() {
     console.log(`[startup] missing ${[needsNext && ".next", needsServer && "server/dist"].filter(Boolean).join(" and ")} in ${root}`);
 
     if (needsServer) await runCli("typescript", "bin/tsc", ["--project", "server/tsconfig.json"]);
-    if (needsNext) await runCli("next", "dist/bin/next", ["build"]);
+    // --webpack, not the default Turbopack. Turbopack requires next-swc's native
+    // bindings, and this host's glibc is too old to load them (GLIBC_2.29 not
+    // found), so Next falls back to WASM and Turbopack refuses to run. Webpack
+    // works with the WASM bindings. Used on every platform rather than only where
+    // it is required, so a local build exercises the same pipeline as production.
+    if (needsNext) await runCli("next", "dist/bin/next", ["build", "--webpack"]);
 
     if (!existsSync(path.join(root, ".next", "BUILD_ID"))) {
         throw new Error("next build finished but .next/BUILD_ID is still missing");
