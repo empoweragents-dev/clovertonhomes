@@ -26,7 +26,22 @@ const state = {
     phase: "checking",   // checking -> building -> importing -> preparing -> ready | failed
     since: Date.now(),
     error: null,
+    // Tail of the build's own output. A build that fails only on this host is
+    // undiagnosable from an exit code alone, and the log file needs shell access
+    // that whoever is deploying may not have -- so the reason is served instead.
+    buildLog: [],
 };
+
+const BUILD_LOG_LINES = 60;
+
+function recordBuildOutput(chunk) {
+    for (const raw of chunk.toString().split(String.fromCharCode(10))) {
+        const line = raw.trim();
+        if (!line) continue;
+        state.buildLog.push(line);
+        if (state.buildLog.length > BUILD_LOG_LINES) state.buildLog.shift();
+    }
+}
 
 function setPhase(phase) {
     state.phase = phase;
@@ -46,7 +61,10 @@ app.get("/health", (req, res) => {
         status: state.phase === "ready" ? "ok" : state.phase,
         secondsInPhase: Math.round((Date.now() - state.since) / 1000),
         ...(state.error ? { error: state.error } : {}),
+        ...(state.phase === "failed" && state.buildLog.length ? { buildLog: state.buildLog } : {}),
         nodeEnv: process.env.NODE_ENV,
+        nodeVersion: process.version,
+        memoryMb: Math.round(require("os").totalmem() / 1048576),
         cwd: process.cwd(),
         appDir: root,
         timestamp: new Date().toISOString(),
@@ -100,7 +118,22 @@ function runCli(packageName, relativeEntry, args) {
                 `(looked for ${relativeEntry}). Run npm install in this directory.`
             ));
         }
-        const child = spawn(process.execPath, [entry, ...args], { cwd: root, stdio: "inherit" });
+        // Cap the build's heap. Shared hosting gives the container far less memory
+        // than the machine reports, and Node sizes its old space from the reported
+        // total -- so a default-configured build can be OOM-killed (a bare exit 1,
+        // no error message) long before Node would collect. NODE_OPTIONS lets the
+        // host raise it if there is genuinely more room.
+        const child = spawn(process.execPath, [entry, ...args], {
+            cwd: root,
+            stdio: ["ignore", "pipe", "pipe"],
+            env: {
+                ...process.env,
+                NODE_OPTIONS: process.env.NODE_OPTIONS || "--max-old-space-size=1024",
+                NEXT_TELEMETRY_DISABLED: "1",
+            },
+        });
+        child.stdout.on("data", (d) => { process.stdout.write(d); recordBuildOutput(d); });
+        child.stderr.on("data", (d) => { process.stderr.write(d); recordBuildOutput(d); });
         child.on("error", reject);
         child.on("close", (code) => {
             code === 0
