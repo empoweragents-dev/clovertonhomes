@@ -82,13 +82,30 @@ const watchdog = setInterval(() => {
     console.warn(`[startup] still "${state.phase}" after ${Math.round((Date.now() - state.since) / 1000)}s`);
 }, 30000);
 
-/** Runs a command without blocking the event loop, so /health stays responsive. */
-function run(command, args) {
+/**
+ * Runs a package's CLI with this process's own node binary.
+ *
+ * Not `npx`, and no shell: the app runs under a process manager whose PATH is
+ * minimal, so `npx next build` exited 127 (command not found) even though next
+ * was installed right there in node_modules. Resolving the CLI's JS entry point
+ * and handing it to process.execPath removes both PATH and the shell from the
+ * equation.
+ */
+function runCli(packageName, relativeEntry, args) {
     return new Promise((resolve, reject) => {
-        const child = spawn(command, args, { cwd: root, stdio: "inherit", shell: true });
+        const entry = path.join(root, "node_modules", packageName, relativeEntry);
+        if (!existsSync(entry)) {
+            return reject(new Error(
+                `${packageName} is not installed in ${root}/node_modules ` +
+                `(looked for ${relativeEntry}). Run npm install in this directory.`
+            ));
+        }
+        const child = spawn(process.execPath, [entry, ...args], { cwd: root, stdio: "inherit" });
         child.on("error", reject);
         child.on("close", (code) => {
-            code === 0 ? resolve() : reject(new Error(`\`${command} ${args.join(" ")}\` exited with code ${code}`));
+            code === 0
+                ? resolve()
+                : reject(new Error(`${packageName} ${args.join(" ")} exited with code ${code}`));
         });
     });
 }
@@ -119,8 +136,8 @@ async function ensureBuild() {
     setPhase("building");
     console.log(`[startup] missing ${[needsNext && ".next", needsServer && "server/dist"].filter(Boolean).join(" and ")} in ${root}`);
 
-    if (needsServer) await run("npx", ["tsc", "--project", "server/tsconfig.json"]);
-    if (needsNext) await run("npx", ["next", "build"]);
+    if (needsServer) await runCli("typescript", "bin/tsc", ["--project", "server/tsconfig.json"]);
+    if (needsNext) await runCli("next", "dist/bin/next", ["build"]);
 
     if (!existsSync(path.join(root, ".next", "BUILD_ID"))) {
         throw new Error("next build finished but .next/BUILD_ID is still missing");
