@@ -1,0 +1,4 @@
+Cloverton Homes Express deployment probe
+Probe version: 2026-09-02-01
+Expected entry file: app.js
+Expected health endpoint: /health
