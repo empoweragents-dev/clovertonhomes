@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type Express } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import next from "next";
@@ -46,108 +46,103 @@ const nextApp = next({
 });
 const handle = nextApp.getRequestHandler();
 
-// Create Express app
-const app = express();
+export async function prepareApp(app: Express): Promise<void> {
+    // Prepare Next.js
+    await nextApp.prepare();
+    console.log("✅ Next.js app prepared");
 
-(async () => {
-    try {
-        // Prepare Next.js
-        // Prepare Next.js
-        await nextApp.prepare();
-        console.log("✅ Next.js app prepared");
+    // Security middleware
+    app.use(helmet({
+        crossOriginResourcePolicy: { policy: "cross-origin" },
+        contentSecurityPolicy: false, // Updated: Disable specific CSP for Next.js compatibility
+    }));
 
-        // Security middleware
-        app.use(helmet({
-            crossOriginResourcePolicy: { policy: "cross-origin" },
-            contentSecurityPolicy: false, // Updated: Disable specific CSP for Next.js compatibility
-        }));
+    // CORS configuration
+    app.use(cors({
+        origin: env.BETTER_AUTH_TRUSTED_ORIGINS,
+        credentials: true,
+    }));
 
-        // CORS configuration
-        app.use(cors({
-            origin: env.BETTER_AUTH_TRUSTED_ORIGINS,
-            credentials: true,
-        }));
+    // Body parsing
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
 
-        // Body parsing
-        app.use(express.json());
-        app.use(express.urlencoded({ extended: true }));
+    // Cache control middleware - Prevents stale HTML cache issues
+    app.use((req, res, next) => {
+        const path = req.path;
 
-        // Cache control middleware - Prevents stale HTML cache issues
-        app.use((req, res, next) => {
-            const path = req.path;
+        // Static assets from _next should be cached aggressively (content-hashed, immutable)
+        if (path.startsWith('/_next/static/')) {
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+        // Images can be cached for a moderate time
+        else if (path.match(/\.(jpg|jpeg|png|gif|webp|svg|ico)$/)) {
+            res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+        }
+        // HTML pages should not be cached long to prevent stale references to CSS/JS chunks
+        else if (path.endsWith('.html') || !path.includes('.')) {
+            res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=60, must-revalidate');
+        }
 
-            // Static assets from _next should be cached aggressively (content-hashed, immutable)
-            if (path.startsWith('/_next/static/')) {
-                res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-            }
-            // Images can be cached for a moderate time
-            else if (path.match(/\.(jpg|jpeg|png|gif|webp|svg|ico)$/)) {
-                res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
-            }
-            // HTML pages should not be cached long to prevent stale references to CSS/JS chunks
-            else if (path.endsWith('.html') || !path.includes('.')) {
-                res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=60, must-revalidate');
-            }
+        next();
+    });
 
-            next();
-        });
+    // Better Auth routes - handles /api/auth/*
+    app.all("/api/auth/*", toNodeHandler(auth));
 
-        // Health check
-        app.get("/health", (req, res) => {
-            res.json({ status: "ok", timestamp: new Date().toISOString() });
-        });
+    // API routes
+    app.use("/api", apiRoutes);
 
-        // Better Auth routes - handles /api/auth/*
-        app.all("/api/auth/*", toNodeHandler(auth));
+    // Next.js static asset handling (optimized)
+    app.get('/_next/*', (req, res) => {
+        return handle(req, res);
+    });
 
-        // API routes
-        app.use("/api", apiRoutes);
+    // Specific image routes if needed (e.g. from public)
+    app.get('/images/*', (req, res) => {
+        return handle(req, res);
+    });
 
-        // Next.js static asset handling (optimized)
-        app.get('/_next/*', (req, res) => {
-            return handle(req, res);
-        });
+    // Handle all other routes with Next.js
+    // IMPORTANT: Move notFoundHandler to API route catch-all if explicitly needed for API only
+    // Otherwise, Next.js handles 404s for pages.
 
-        // Specific image routes if needed (e.g. from public)
-        app.get('/images/*', (req, res) => {
-            return handle(req, res);
-        });
+    // Custom API 404 handler
+    app.use("/api/*", notFoundHandler);
 
-        // Handle all other routes with Next.js
-        // IMPORTANT: Move notFoundHandler to API route catch-all if explicitly needed for API only
-        // Otherwise, Next.js handles 404s for pages.
+    // Next.js Handler (All other routes)
+    app.all("*", (req, res) => {
+        return handle(req, res);
+    });
 
-        // Custom API 404 handler
-        app.use("/api/*", notFoundHandler);
+    // Error handler (Global)
+    app.use(errorHandler);
 
-        // Next.js Handler (All other routes)
-        app.all("*", (req, res) => {
-            return handle(req, res);
-        });
-
-        // Error handler (Global)
-        app.use(errorHandler);
-
-        // Start server
-        const PORT = env.PORT;
-
-        app.listen(PORT, () => {
-            console.log(`
+    console.log(`
         🏠 Cloverton Homes Unified Server
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        📍 Server running on port ${PORT}
+        📍 Server running on port ${env.PORT}
         🌍 Environment: ${env.NODE_ENV}
-        🔗 App URL: http://localhost:${PORT}
-        🔗 API Base: http://localhost:${PORT}/api
-        🔐 Auth: http://localhost:${PORT}/api/auth
+        🔗 App URL: http://localhost:${env.PORT}
+        🔗 API Base: http://localhost:${env.PORT}/api
+        🔐 Auth: http://localhost:${env.PORT}/api/auth
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
           `);
+}
+
+// Preserve direct server/src and server/dist execution for local backend workflows.
+const entryFile = process.argv[1] ? path.resolve(process.argv[1]) : "";
+if (entryFile === fileURLToPath(import.meta.url)) {
+    const standaloneApp = express();
+
+    prepareApp(standaloneApp)
+        .then(() => {
+            standaloneApp.listen(env.PORT, "0.0.0.0", () => {
+                console.log(`Express server listening on port ${env.PORT}`);
+            });
+        })
+        .catch((error) => {
+            console.error("Failed to start server:", error);
+            process.exit(1);
         });
-
-    } catch (e) {
-        console.error("Failed to start server:", e);
-        process.exit(1);
-    }
-})();
-
-export default app;
+}
