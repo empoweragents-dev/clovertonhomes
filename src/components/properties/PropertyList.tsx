@@ -1,30 +1,31 @@
 import PropertyCard from '@/components/properties/PropertyCard'
+import { listProperties } from '@/lib/properties'
 
-// Function to fetch properties from API
+/**
+ * Reads listings straight from the database.
+ *
+ * Previously this fetched /api/properties over HTTP. Because the app serves its own
+ * API from the same Node process, that self-request competed with the very render
+ * that issued it and timed out (Next surfaced a 504), so the page rendered "No
+ * properties found" even though the data was there. It also made server rendering
+ * depend on the site being reachable from the public internet via the CDN.
+ */
 async function getProperties(searchParams: any) {
-    const params = new URLSearchParams(searchParams)
-    // Avoid passing empty keys
-    if (!searchParams.regionId) params.delete('regionId')
-
-    // Add default limit if not present
-    if (!params.has('limit')) params.set('limit', '12')
-
     try {
-        // Use absolute URL for server-side fetch
-        // Priority: NEXT_PUBLIC_SITE_URL > VERCEL_URL > production domain > localhost
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ||
-            (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
-            'https://clovertonhomes.com.au'
-        const res = await fetch(`${baseUrl}/api/properties?${params.toString()}`, {
-            cache: 'no-store' // Ensure fresh data on each request for filters
+        return await listProperties({
+            regionId: searchParams.regionId,
+            estateId: searchParams.estateId,
+            minPrice: searchParams.minPrice,
+            maxPrice: searchParams.maxPrice,
+            bedrooms: searchParams.bedrooms,
+            bathrooms: searchParams.bathrooms,
+            garages: searchParams.garages,
+            isLandReady: searchParams.isLandReady,
+            badge: searchParams.badge,
+            search: searchParams.search,
+            limit: searchParams.limit ?? '12',
+            offset: searchParams.offset,
         })
-
-        if (!res.ok) {
-            console.error(`Status: ${res.status}`)
-            return { data: [], total: 0 }
-        }
-
-        return await res.json()
     } catch (error) {
         console.error("Error fetching properties:", error)
         return { data: [], total: 0 }

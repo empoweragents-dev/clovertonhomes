@@ -4,7 +4,7 @@ import helmet from "helmet";
 import next from "next";
 import path from "path";
 import { existsSync } from "fs";
-import { fileURLToPath } from "url";
+import { fileURLToPath, parse as parseUrl } from "url";
 import { toNodeHandler } from "better-auth/node";
 import { env } from "./config/env.js";
 import { auth } from "./config/auth.js";
@@ -95,12 +95,12 @@ export async function prepareApp(app: Express): Promise<void> {
 
     // Next.js static asset handling (optimized)
     app.get('/_next/*', (req, res) => {
-        return handle(req, res);
+        return handle(req, res, parseUrl(req.url, true));
     });
 
     // Specific image routes if needed (e.g. from public)
     app.get('/images/*', (req, res) => {
-        return handle(req, res);
+        return handle(req, res, parseUrl(req.url, true));
     });
 
     // Handle all other routes with Next.js
@@ -112,7 +112,7 @@ export async function prepareApp(app: Express): Promise<void> {
 
     // Next.js Handler (All other routes)
     app.all("*", (req, res) => {
-        return handle(req, res);
+        return handle(req, res, parseUrl(req.url, true));
     });
 
     // Error handler (Global)
