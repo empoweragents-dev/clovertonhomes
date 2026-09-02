@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { auth } from "../config/auth.js";
+import { getAuth } from "../config/auth.js";
 
 // Extend Express Request type
 declare global {
@@ -18,6 +18,16 @@ declare global {
 
 // Authentication middleware - verifies session
 export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
+    const auth = getAuth();
+    // Auth misconfigured: refuse the request rather than letting it through. A
+    // protected route must never open up because sign-in happens to be broken.
+    if (!auth) {
+        return res.status(503).json({
+            success: false,
+            message: "Authentication is unavailable on this server.",
+        });
+    }
+
     try {
         const session = await auth.api.getSession({
             headers: req.headers as any,
@@ -49,6 +59,9 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
 
 // Optional auth - attaches user if authenticated, continues otherwise
 export const optionalAuth = async (req: Request, res: Response, next: NextFunction) => {
+    const auth = getAuth();
+    if (!auth) return next(); // unauthenticated, which is a valid state here
+
     try {
         const session = await auth.api.getSession({
             headers: req.headers as any,

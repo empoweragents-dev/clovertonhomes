@@ -7,7 +7,7 @@ import { existsSync } from "fs";
 import { fileURLToPath, parse as parseUrl } from "url";
 import { toNodeHandler } from "better-auth/node";
 import { env } from "./config/env.js";
-import { auth } from "./config/auth.js";
+import { getAuth } from "./config/auth.js";
 import apiRoutes from "./routes/index.js";
 import { errorHandler, notFoundHandler } from "./middleware/index.js";
 
@@ -88,7 +88,17 @@ export async function prepareApp(app: Express): Promise<void> {
     });
 
     // Better Auth routes - handles /api/auth/*
-    app.all("/api/auth/*", toNodeHandler(auth));
+    const authInstance = getAuth();
+    if (authInstance) {
+        app.all("/api/auth/*", toNodeHandler(authInstance));
+    } else {
+        app.all("/api/auth/*", (_req, res) => {
+            res.status(503).json({
+                success: false,
+                message: "Authentication is not configured on this server.",
+            });
+        });
+    }
 
     // API routes
     app.use("/api", apiRoutes);
