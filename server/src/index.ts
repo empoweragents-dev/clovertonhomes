@@ -10,33 +10,45 @@ import { env } from "./config/env.js";
 import { getAuth } from "./config/auth.js";
 import apiRoutes from "./routes/index.js";
 import { errorHandler, notFoundHandler } from "./middleware/index.js";
+import { UPLOAD_URL_PREFIX, getUploadDir } from "./config/storage.js";
 
 // Initialize Next.js
 const dev = env.NODE_ENV !== "production";
 
 /**
- * Locates the directory holding the Next build. The two deploy layouts put it in
- * different places relative to this file, and the process cwd is set by the host
- * rather than by us, so neither assumption is safe on its own:
+ * Locates the directory holding the Next build (.next).
  *
- *   git build, root "./"   ->  <repo>/server/dist/index.js  with <repo>/.next
- *   packaged deploy/app    ->  <app>/dist/index.js          with <app>/.next
- *
- * Checks cwd first (correct for both when the host sets it as expected), then walks
- * up from this file. Falls back to cwd so the failure is Next's own clear message
- * rather than a confusing path error.
+ * The process CWD is set by the host, not by us, and the deployed tree has lived
+ * in three different shapes: the repo root, a packaged deploy/app, and Hostinger's
+ * git build directory (~/hbuild). Guessing wrong means Next boots against a
+ * missing build and every page fails, so search rather than assume -- and when
+ * nothing is found, say so in a way that names the actual problem instead of
+ * surfacing a confusing path error from deep inside Next.
  */
 function resolveNextDir(): string {
     const here = path.dirname(fileURLToPath(import.meta.url));
     const candidates = [
-        process.cwd(),
-        path.resolve(here, ".."),        // <app>/dist/index.js  -> <app>
-        path.resolve(here, "..", ".."),  // <repo>/server/dist   -> <repo>
+        process.cwd(),                          // host set it correctly
+        path.resolve(here, ".."),               // <app>/dist/index.js   -> <app>
+        path.resolve(here, "..", ".."),         // <repo>/server/dist    -> <repo>
+        path.resolve(here, "..", "..", ".."),   // nested one deeper
+        path.resolve(process.cwd(), "hbuild"),  // Hostinger git build output
+        path.resolve(process.cwd(), ".."),
     ];
+
+    const seen = new Set<string>();
     for (const dir of candidates) {
-        if (existsSync(path.join(dir, ".next"))) return dir;
+        if (seen.has(dir)) continue;
+        seen.add(dir);
+        if (existsSync(path.join(dir, ".next"))) {
+            console.log(`Next build found at ${path.join(dir, ".next")}`);
+            return dir;
+        }
     }
-    console.warn("Could not locate a .next build; falling back to cwd:", process.cwd());
+
+    console.error("!! NO NEXT BUILD (.next) FOUND - the site cannot render any page.");
+    console.error("   Looked in: " + [...seen].join(", "));
+    console.error("   Run `npm run build` in the deployed directory, then restart.");
     return process.cwd();
 }
 
@@ -87,6 +99,15 @@ export async function prepareApp(app: Express): Promise<void> {
         next();
     });
 
+    // Uploaded images, written by /api/upload to a directory that may sit outside
+    // the deployment tree. Mounted ahead of the API and Next so a filename can
+    // never be shadowed by a route.
+    app.use(UPLOAD_URL_PREFIX, express.static(getUploadDir(), {
+        maxAge: "7d",
+        fallthrough: true,
+        index: false,
+    }));
+
     // Better Auth routes - handles /api/auth/*
     const authInstance = getAuth();
     if (authInstance) {
@@ -136,6 +157,8 @@ export async function prepareApp(app: Express): Promise<void> {
         🔗 App URL: http://localhost:${env.PORT}
         🔗 API Base: http://localhost:${env.PORT}/api
         🔐 Auth: http://localhost:${env.PORT}/api/auth
+        📂 CWD: ${process.cwd()}
+        🖼  Uploads: ${getUploadDir()}
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
           `);
 }

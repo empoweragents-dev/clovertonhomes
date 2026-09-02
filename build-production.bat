@@ -139,10 +139,9 @@ echo.
 echo ### Setup Steps:
 echo 1. Upload all files from deploy/backend/ to your Node.js app root
 echo 2. Rename .env.example to .env and fill in your values:
-echo    - DATABASE_URL: Your Supabase PostgreSQL connection string
-echo    - SUPABASE_URL: Your Supabase project URL
-echo    - SUPABASE_ANON_KEY: Your Supabase anon key
-echo    - SUPABASE_SERVICE_ROLE_KEY: Your Supabase service role key
+echo    - DATABASE_URL: Your Hostinger MySQL connection string
+echo    - BETTER_AUTH_SECRET: random value, at least 32 characters
+echo    - UPLOAD_DIR: writable directory outside the deployment tree
 echo    - BETTER_AUTH_SECRET: A secure random string ^(32+ chars^)
 echo    - BETTER_AUTH_URL: Your backend URL ^(e.g., https://api.yourdomain.com^)
 echo    - BETTER_AUTH_TRUSTED_ORIGINS: Your frontend URLs, comma-separated
@@ -160,7 +159,7 @@ echo    Set NEXT_PUBLIC_API_URL to your backend URL
 echo.
 echo 2. Update backend CORS settings to allow your frontend domain
 echo.
-echo 3. Ensure Supabase database has all tables ^(run npm run db:push locally first^)
+echo 3. Ensure the MySQL database has all tables ^(run npm run db:push locally first^)
 echo.
 echo ---
 echo.

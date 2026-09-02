@@ -73,7 +73,7 @@ echo 1. **Upload**: Upload ALL files in this folder to your Hostinger Node.js ap
 echo.
 echo 2. **Environment**:
 echo    - Open `.env` file.
-echo    - Fill in your database details ^(Supabase^).
+echo    - Fill in your database details ^(Hostinger MySQL^).
 echo    - Set `NODE_ENV=production`.
 echo    - Set `PORT` ^(if not provided by Hostinger^).
 echo    - IMPORTANT: Ensure `BETTER_AUTH_URL` matches your domain.

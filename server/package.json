@@ -19,7 +19,6 @@
     },
     "dependencies": {
         "@react-pdf/renderer": "4.6.1",
-        "@supabase/supabase-js": "^2.47.10",
         "better-auth": "^1.2.3",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",

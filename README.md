@@ -79,7 +79,7 @@ compiled Next.js website from one Node.js service.
 - Application port: use Hostinger's `PORT` environment variable
 
 Add the production variables listed in `server/.env.example` through Hostinger's
-environment variable settings. At minimum, configure the database, Supabase,
+environment variable settings. At minimum, configure the database,
 Better Auth, trusted origin, frontend URL, and SMTP values. Do not commit a real
 `.env` file or any credentials to Git.
 

@@ -17,10 +17,11 @@ export const env = {
     // Database
     DATABASE_URL: process.env.DATABASE_URL!,
 
-    // Supabase
-    SUPABASE_URL: process.env.SUPABASE_URL!,
-    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    // Uploaded images. Point this outside the deployment directory in production,
+    // or every deploy wipes the uploads with the rest of the checkout.
+    UPLOAD_DIR: process.env.UPLOAD_DIR
+        ? resolve(process.env.UPLOAD_DIR)
+        : resolve(__dirnameLocal, "../../../public/uploads"),
 
     // Better Auth
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET!,
@@ -46,9 +47,6 @@ export const env = {
 // Validate required environment variables
 const requiredEnvVars = [
     "DATABASE_URL",
-    "SUPABASE_URL",
-    "SUPABASE_ANON_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
     "BETTER_AUTH_SECRET",
 ];
 
